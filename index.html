@@ -1345,6 +1345,8 @@ function errMsg(e) {
   if (code === "bloqueado") return `Entrada travada por segurança (muitas senhas erradas). Tente de novo em ${e.minutos || 15} min.`;
   if (code === "cpf_repetido") return "Já existe um atleta com este CPF no plantel.";
   if (code === "ja_existe") return "Outra pessoa já tinha feito isso agora há pouco. A tela foi atualizada: confira.";
+  if (code === "vagas") return `Não há mais vaga ${e.origem === "fora" ? "de fora (9/9)" : "de Sertãozinho (16/16)"}: outro diretor acabou de preencher. A tela foi atualizada.`;
+  if (code === "ja_contratado") return "Este jogador já foi contratado (ou saiu do radar) agora há pouco. A tela foi atualizada.";
   if (code === "rede") return "Sem internet agora. Tente de novo quando o sinal voltar.";
   return "Não foi possível salvar agora. Tente novamente em instantes.";
 }
@@ -2835,6 +2837,8 @@ function gsCallT(ms, fn, ...args) {
         if (m.includes("BLOQUEADO")) { rej({ code: "bloqueado", minutos: Number((m.match(/BLOQUEADO:(\d+)/) || [])[1]) || 15, message: m }); return; }
         if (m.includes("CPF_REPETIDO")) { rej({ code: "cpf_repetido", message: m }); return; }
         if (m.includes("JA_EXISTE")) { rej({ code: "ja_existe", message: m }); return; }
+        if (m.includes("VAGAS_ESGOTADAS")) { rej({ code: "vagas", origem: m.includes(":fora") ? "fora" : "sertaozinho", message: m }); return; }
+        if (m.includes("JA_CONTRATADO")) { rej({ code: "ja_contratado", message: m }); return; }
         if (ERRO_REDE.test(m) || navigator.onLine === false) { rej({ code: "rede", message: m }); return; }
         if (m.includes("NAO_ENCONTRADO")) { rej({ code: "invalid_argument", message: m }); return; }
         rej({ code: "unavailable", message: m });
@@ -4924,12 +4928,23 @@ async function submitPlayer(form) {
   const docId = id || newId(kind);
   let cpf = null;
   if (kind === "plantel") { cpf = data.cpf; delete data.cpf; }   // CPF vai para a área restrita
-  let ok = await saveDoc(kind, docId, data);
-  if (ok && cpf) ok = await saveCpf(docId, cpf);
-  if (ok && fromRadar) await deleteDoc("radar", fromRadar);
-  if (ok && saindo) {
-    if (await moveToRadar(saindo, `Saiu do plantel na troca por ${firstLast(data.nome)} em ${new Date().toLocaleDateString("pt-BR")}`))
-      { await deleteDoc("plantel", saindo.id); await deleteCpf(saindo.id); }
+  const obsSaida = saindo ? `Saiu do plantel na troca por ${firstLast(data.nome)} em ${new Date().toLocaleDateString("pt-BR")}` : "";
+  let ok = null;
+  // Contratação do radar e troca: um passo só no servidor (vagas e CPF conferidos lá; ou tudo, ou nada)
+  if (kind === "plantel" && (fromRadar || saindo) && PLATAFORMA === "google" && gsDisponivel()) ok = await contratarNoServidor(docId, data, cpf, fromRadar, saindo, obsSaida);
+  if (ok === null && anterior && !fromRadar && !saindo) {
+    // Edição: manda só o que mudou, para não apagar o que outro diretor marcou nesse meio tempo (ex.: itens da Liga)
+    ok = await salvarMudancas(kind, docId, data, anterior);
+    if (ok && cpf) ok = await saveCpf(docId, cpf);
+  }
+  if (ok === null) {
+    ok = await saveDoc(kind, docId, data);
+    if (ok && cpf) ok = await saveCpf(docId, cpf);
+    if (ok && fromRadar) await deleteDoc("radar", fromRadar);
+    if (ok && saindo) {
+      if (await moveToRadar(saindo, obsSaida))
+        { await deleteDoc("plantel", saindo.id); await deleteCpf(saindo.id); }
+    }
   }
   if (ok) {
     closeModal();
@@ -4938,6 +4953,36 @@ async function submitPlayer(form) {
   } else { btn.disabled = false; btn.textContent = label; }
 }
 
+// Edição de um cadastro: só os campos que mudaram (null = nada mudou de fato, nem precisa gravar)
+async function salvarMudancas(col, id, data, anterior) {
+  if (state.usuario) data.atualizadoPor = state.usuario;
+  const ops = Object.keys(data).filter(k => k !== "id" && JSON.stringify(data[k]) !== JSON.stringify(anterior[k])).map(k => ({ c: [k], v: data[k] }));
+  if (!ops.length) return true;
+  return opsDoc(col, id, ops, anterior);
+}
+// Contratar do radar / trocar: tudo no servidor de uma vez. Devolve null se o servidor ainda for o antigo (sem api_contratar).
+async function contratarNoServidor(novoId, doc, cpf, radarId, saindo, obsSaida) {
+  if (state.usuario) doc.atualizadoPor = state.usuario;
+  const pedido = { novoId, doc, cpf: cpf && cpfDigits(cpf) ? cpf : "", radarId: radarId || "",
+    saindo: saindo ? { id: saindo.id, radarId: newId("radar"), radarDoc: docRadarDe(saindo, obsSaida) } : null };
+  try {
+    const v = await gsCall("api_contratar", JSON.stringify(pedido));
+    await gsLoad();
+    return true;
+  } catch (e) {
+    const m = String((e && e.message) || "");
+    if (e instanceof TypeError || /FUNCAO_INVALIDA|is not a function|api_contratar/.test(m)) return null;   // servidor antigo: usa o caminho de antes
+    if (e && (e.code === "vagas" || e.code === "ja_contratado")) { try { await gsLoad(); } catch {} }
+    toast(errMsg(e), "bad");
+    return false;
+  }
+}
+function docRadarDe(p, obs) {
+  const now = new Date().toISOString();
+  return { nome: p.nome, posicao: p.posicao, posicao2: p.posicao2 || "", pe: p.pe || "", origem: p.origem, porJogo: num(p.porJogo), porJogo2: temFase2(p) ? num(p.porJogo2) : null, gasolina: num(p.gasolina),
+    assinatura: num(p.assinatura), chuteira: !!p.chuteira, bonus: p.bonus || [], contato: p.contato || "", status: "observando",
+    ultimoContato: "", prioridade: "", obs, criadoEm: now, atualizadoEm: now };
+}
 // Leva um atleta do plantel de volta ao radar, com os valores dele (sem CPF e data de nascimento)
 async function moveToRadar(p, obs) {
   const now = new Date().toISOString();
