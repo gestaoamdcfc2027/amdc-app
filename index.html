@@ -622,6 +622,19 @@ body.readonly .slot.empty{pointer-events:none;opacity:.7}
 .tabs-scroll{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
 .tabs-scroll::-webkit-scrollbar{display:none}
 .tab{flex:none}
+/* Computador: as abas ganham a largura toda (Guia e Resumo ficam acima, à direita), assim nenhuma aba some */
+@media (min-width:721px){
+  .tabs{flex-wrap:wrap;row-gap:6px}
+  .tabs-scroll{flex-basis:100%;order:1}
+  .tabs .tools{order:0;margin-left:auto;padding-bottom:0}
+}
+@media (min-width:721px) and (max-width:1180px){
+  .tab{padding:12px 12px;font-size:17px}
+}
+/* Se ainda faltar espaço, um degradê na borda avisa que há mais abas para o lado */
+.tabs-scroll.mais-dir{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 48px),transparent)}
+.tabs-scroll.mais-esq{-webkit-mask-image:linear-gradient(90deg,transparent,#000 48px);mask-image:linear-gradient(90deg,transparent,#000 48px)}
+.tabs-scroll.mais-esq.mais-dir{-webkit-mask-image:linear-gradient(90deg,transparent,#000 48px,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(90deg,transparent,#000 48px,#000 calc(100% - 48px),transparent)}
 .tab .count.alert{background:#E5484D;color:#fff}
 .tab[aria-selected="true"] .count.alert{background:#E5484D;color:#fff}
 .who{margin-left:10px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:999px;padding:6px 12px;font-weight:600;font-size:13px;white-space:nowrap}
@@ -1534,6 +1547,28 @@ function pedirNome() {
   state.whoAsked = true; openWho(true);
 }
 
+// Barra de abas: deixa a aba escolhida sempre à vista e marca as bordas quando há mais abas para o lado
+function bordasAbas() {
+  const sc = document.querySelector(".tabs-scroll"); if (!sc) return;
+  sc.classList.toggle("mais-esq", sc.scrollLeft > 2);
+  sc.classList.toggle("mais-dir", sc.scrollLeft + sc.clientWidth < sc.scrollWidth - 2);
+}
+document.addEventListener("scroll", e => { if (e.target && e.target.classList && e.target.classList.contains("tabs-scroll")) bordasAbas(); }, true);
+window.addEventListener("resize", bordasAbas);
+window.addEventListener("load", bordasAbas);
+if (window.ResizeObserver) { const scAbas = document.querySelector(".tabs-scroll"); if (scAbas) new ResizeObserver(bordasAbas).observe(scAbas); }
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(bordasAbas);
+let abaVista = null;
+function mostrarAbaAtiva() {
+  const sc = document.querySelector(".tabs-scroll"), el = $("#tab-" + state.tab);
+  if (sc && el && abaVista !== state.tab) {
+    abaVista = state.tab;
+    const a = el.offsetLeft - sc.offsetLeft, b = a + el.offsetWidth;
+    if (a < sc.scrollLeft) sc.scrollLeft = Math.max(0, a - 24);
+    else if (b > sc.scrollLeft + sc.clientWidth) sc.scrollLeft = b - sc.clientWidth + 24;
+  }
+  bordasAbas();
+}
 function renderHeader() {
   $("#cnt-radar").textContent = state.radar.length;
   $("#cnt-pat").textContent = state.patrocinios.length;
@@ -1555,6 +1590,7 @@ function renderHeader() {
     $("#tab-" + t).setAttribute("aria-selected", state.tab === t ? "true" : "false");
     $("#view-" + t).classList.toggle("hidden", state.tab !== t);
   });
+  mostrarAbaAtiva();
   const dot = $("#syncDot"), txt = $("#syncTxt");
   const map = {
     loading: ["", "Carregando dados…"],
