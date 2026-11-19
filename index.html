@@ -2655,7 +2655,7 @@ const getHelp = () => [
       <li>Escolha a <b>formação</b> (4-4-2, 4-3-3, 4-2-3-1, 4-1-4-1, 3-5-2 ou 5-3-2). O campo mostra as 11 posições.</li>
       <li><b>Toque numa posição</b> para escolher quem joga ali. Aparecem primeiro os jogadores <b>daquela posição</b>, do <b>Plantel</b> (borda azul) e do <b>Radar</b> (borda amarela, ainda não contratados). Dá para misturar os dois.</li>
       <li><b>Arraste</b> um jogador para mudar o lugar dele no campo (ex.: lateral mais avançado). Solte em cima de outro jogador para <b>trocar os dois</b> de posição.</li>
-      <li>Em <b>Banco de reservas</b>, adicione até 12 reservas.</li>
+      <li>Em <b>Banco de reservas</b>, adicione até 14 reservas.</li>
       <li>A <b>Análise</b> mostra: o custo por jogo dos titulares e do banco, quanto custaria a mais contratar os do radar (e as luvas), como ficariam as <b>vagas</b> de Sertãozinho e de fora e quem está <b>fora de posição</b> (marcado com <b style="color:var(--bad)">!</b>).</li>
       <li><b>Nada é salvo sozinho.</b> Toque em <b>💾 Salvar</b> para guardar o plano com um nome. Depois, ele aparece em "Planos salvos" para toda a diretoria. <b>Salvar como novo</b> cria uma cópia para testar variações.</li>
       <li><b>📷 Imagem</b> gera uma figura do campo (sem valores) para mandar no WhatsApp.</li>
@@ -4047,7 +4047,7 @@ const FORMACOES = {
   "3-5-2": [["Zagueiro", 72, 76], ["Zagueiro", 50, 79], ["Zagueiro", 28, 76], ["Lateral direito", 88, 50], ["Volante", 63, 57], ["Volante", 37, 57], ["Lateral esquerdo", 12, 50], ["Meia-atacante", 50, 39], ["Centroavante", 62, 18], ["Centroavante", 38, 18]],
   "5-3-2": [["Lateral direito", 88, 66], ["Zagueiro", 70, 77], ["Zagueiro", 50, 79], ["Zagueiro", 30, 77], ["Lateral esquerdo", 12, 66], ["Volante", 50, 55], ["Meia", 72, 45], ["Meia", 28, 45], ["Centroavante", 62, 20], ["Centroavante", 38, 20]],
 };
-const MAX_BANCO = 12;
+const MAX_BANCO = 14;
 const slotsDe = f => [{ pos: "Goleiro", x: 50, y: 92 }, ...(FORMACOES[f] || FORMACOES["4-4-2"]).map(([pos, x, y]) => ({ pos, x, y }))];
 const planoVazio = (f = "4-4-2") => ({ id: null, nome: "", formacao: f, titulares: slotsDe(f).map(s => ({ ...s, ref: "" })), banco: [] });
 // Quem é o jogador de uma referência "plantel:id" ou "radar:id" (quem foi contratado do radar é achado no plantel)
@@ -4223,7 +4223,7 @@ function ligarArraste() {
 }
 // Imagem do campo para o WhatsApp (sem valores)
 function imagemPlano() {
-  const pl = planoAtual(), W = 720, H = 1060, cv = document.createElement("canvas");
+  const pl = planoAtual(), W = 720, H = 1100, cv = document.createElement("canvas");
   cv.width = W; cv.height = H; const g = cv.getContext("2d");
   g.fillStyle = "#131C47"; g.fillRect(0, 0, W, H);
   g.fillStyle = "#fff"; g.font = "bold 30px Arial"; g.textAlign = "center";
@@ -4252,7 +4252,7 @@ function imagemPlano() {
   g.fillText("Banco:", 30, 950);
   g.font = "18px Arial"; g.fillStyle = "#DDE3FA";
   const linhas = []; let lin = ""; banco.forEach(n => { const nx = lin ? lin + " · " + n : n; if (g.measureText(nx).width > 580) { linhas.push(lin); lin = n; } else lin = nx; }); if (lin) linhas.push(lin);
-  (linhas.length ? linhas : ["—"]).slice(0, 3).forEach((l, i) => g.fillText(l, 110, 950 + i * 26));
+  (linhas.length ? linhas : ["—"]).slice(0, 5).forEach((l, i) => g.fillText(l, 110, 950 + i * 26));
   g.textAlign = "center"; g.font = "15px Arial"; g.fillStyle = "#9AA6D6";
   g.fillText("Branco: plantel · Amarelo: radar (ainda não contratado)", W / 2, H - 18);
   return cv.toDataURL("image/png");
