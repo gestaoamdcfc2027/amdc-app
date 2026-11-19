@@ -2813,6 +2813,11 @@ function jumpHelp(topic) {
    Versão Google: login com senha + dados na planilha (Apps Script)
    ========================================================= */
 const SENHA_KEY = "amdc_senha_v1";
+// "Marca do aparelho": o servidor entrega depois do primeiro acesso. Com ela, este celular continua entrando
+// mesmo se alguém travar a entrada chutando senhas (veja checar_ no Code.gs).
+const MARCA_KEY = "amdc_marca_v1", SEP_MARCA = String.fromCharCode(1);
+function lerMarca() { try { return localStorage.getItem(MARCA_KEY) || ""; } catch { return ""; } }
+function senhaParaEnviar() { const m = lerMarca(); return m ? GSS.senha + SEP_MARCA + m : GSS.senha; }
 const GSS = { senha: null, data: { radar: {}, plantel: {}, sigilo: {}, config: {}, jogos: {}, caixa: {}, acoes: {}, equipe: {}, log: {}, patrocinios: {}, planos: {} }, ver: -1, ls: [], timer: null };
 const gsDisponivel = () => PLATAFORMA === "google" && typeof google !== "undefined" && google.script && google.script.run;
 function gsCall(fn, ...args) { return gsCallT(30000, fn, ...args); }
@@ -2833,7 +2838,7 @@ function gsCallT(ms, fn, ...args) {
         if (ERRO_REDE.test(m) || navigator.onLine === false) { rej({ code: "rede", message: m }); return; }
         if (m.includes("NAO_ENCONTRADO")) { rej({ code: "invalid_argument", message: m }); return; }
         rej({ code: "unavailable", message: m });
-      })[fn](GSS.senha, ...args);
+      })[fn](senhaParaEnviar(), ...args);
   });
 }
 const gsClone = o => JSON.parse(JSON.stringify(o));
@@ -2850,6 +2855,7 @@ function gsSnapDoc(path) {
 function gsEmit() { GSS.ls.slice().forEach(l => { try { l.cb(l.t === "c" ? gsSnapCol(l.p) : gsSnapDoc(l.p)); } catch (e) { console.error(e); } }); }
 async function gsLoad() {
   const d = JSON.parse(await gsCall("api_carregar"));
+  if (d.marca) { try { localStorage.setItem(MARCA_KEY, d.marca); } catch {} }
   GSS.ver = d.versao;
   GSS.url = d.urlApp || "";
   GSS.data = { radar: d.radar || {}, plantel: d.plantel || {}, sigilo: d.sigilo || {}, config: d.config || {},
@@ -2986,7 +2992,7 @@ window.addEventListener("beforeinstallprompt", e => { if (!WEB) return; e.preven
 
 function gsSair(msg) {
   GSS.senha = null;
-  try { localStorage.removeItem(SENHA_KEY); } catch {}
+  try { localStorage.removeItem(SENHA_KEY); localStorage.removeItem(MARCA_KEY); } catch {}
   if (GSS.timer) { clearInterval(GSS.timer); GSS.timer = null; }
   closeModal();
   mostrarLogin(msg || "");
