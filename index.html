@@ -1195,7 +1195,7 @@ function telFormat(t) {
 }
 // Endereço montado sem barras duplas: o Google remove "//" do código ao publicar (achando que é comentário)
 const WA_BASE = "https:" + "/" + "/wa.me/";
-const APP_URL = "";      // endereço do app do AMDC (site próprio); vazio = ainda não publicado
+const APP_URL = "https:" + "/" + "/gestaoamdcfc2027.github.io/amdc-app/";      // endereço do app do AMDC (site próprio); vazio = ainda não publicado
 const WEB = !!window.__WEB__;     // true quando a tela está rodando no app (site próprio, sem a faixa do Google)
 const baseWeb = () => location.href.split("#")[0].split("?")[0].replace(/index\.html$/, "");
 const waLink = t => { const d = String(t || "").replace(/\D/g, ""); return d.length >= 10 ? WA_BASE + "55" + d : null; };
