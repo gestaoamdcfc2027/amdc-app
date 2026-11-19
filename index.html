@@ -514,7 +514,24 @@ textarea.summary{width:100%;min-height:340px;font-family:ui-monospace,SFMono-Reg
 .simtab th,.simtab td{padding:8px;border-bottom:1px solid #EDF0F6;text-align:left}
 .simtab th{font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
 .simtab .num{text-align:right;font-variant-numeric:tabular-nums}
-.sim-flags{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.sim-flags{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.sim-res h3{display:flex;align-items:center;gap:8px}
+.sim-res h3 .spacer{flex:1}
+.sim-bloco{border-top:1px solid var(--line);padding:12px 0}
+.sim-bloco:first-of-type{border-top:0;padding-top:4px}
+.sim-bloco h4{margin:0 0 8px;font-size:15px}
+.sim-nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.sim-nums>div{background:#F5F7FC;border-radius:10px;padding:9px 12px;display:flex;flex-direction:column;gap:2px}
+.sim-nums>div>span{font-size:12.5px;color:var(--muted)}
+.sim-nums>div b{font-size:20px;font-variant-numeric:tabular-nums}
+.sim-nums>div.destaque{background:var(--royal-soft)}
+.sim-linha{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:4px 0;font-size:14px}
+.sim-linha>span:first-child{min-width:96px}
+.sim-pos{padding:4px 0}
+.sim-pos .sim-linha b{min-width:96px}
+.sim-acts{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:space-between;border-top:1px solid var(--line);padding-top:12px}
+.sim-list label b{white-space:nowrap}
+.sim-list label b small{display:inline;font-weight:500;color:var(--muted);font-size:11px}
 .orc-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
 .orc-sum>div{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:12px 14px}
 .orc-sum span{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700}
@@ -931,8 +948,6 @@ body.readonly .slot.empty{pointer-events:none;opacity:.7}
       <div id="fin-budget"></div>
       <div class="section-title"><div><h2>Para onde vai o dinheiro</h2><div class="sub">Como o gasto por jogo se divide entre origem, posição e faixa de valor.</div></div></div>
       <div id="fin-dist"></div>
-      <div class="section-title" id="sec-simulador"><div><h2>Simulador de contratações</h2><div class="sub">Teste "e se" antes de decidir: contratar alguém do Radar ou tirar alguém do Plantel. Nada é salvo.</div></div></div>
-      <div id="fin-sim"></div>
       <div class="section-title"><div><h2>Financeiro por atleta</h2><div class="sub">Todos os valores de cada atleta no cenário escolhido. Toque no título de uma coluna para ordenar e numa linha para editar o atleta.</div></div></div>
       <div class="toolbar">
         <div class="field-inline">
@@ -1073,6 +1088,7 @@ body.readonly .slot.empty{pointer-events:none;opacity:.7}
     <nav class="subnav" aria-label="Seções do plantel">
       <button data-act="goto" data-target="sec-vagas">Vagas</button>
       <button data-act="goto" data-target="sec-posicoes">Posições</button>
+      <button data-act="goto" data-target="sec-simular">🧮 Simular contratações</button>
       <button data-act="goto" data-target="sec-lista">Lista do elenco</button>
       <button data-act="tab" data-tab="financeiro" data-sec="plano">💰 Financeiro do elenco →</button>
     </nav>
@@ -1092,6 +1108,11 @@ body.readonly .slot.empty{pointer-events:none;opacity:.7}
       <button class="btn edit-only" data-act="config">Ajustar ideal por posição</button>
     </div>
     <div class="posmap" id="plantel-posmap"></div>
+
+    <div class="section-title" id="sec-simular">
+      <div><h2>🧮 Simular contratações</h2><div class="sub">E se trouxermos jogadores do <b>Radar</b> para o plantel? Marque um ou mais e veja, nesta ordem: quanto vamos gastar a mais, como fica o teto, quantas vagas sobram e quantos ainda faltam na posição. <b>Nada é salvo</b>: ninguém é contratado.</div></div>
+    </div>
+    <div id="plantel-sim"></div>
 
     <div class="section-title" id="sec-lista">
       <div><h2>Lista do elenco</h2><div class="sub">Cadastro de cada atleta: documentos, contato e situação na Liga. Os valores completos ficam na aba <b>Financeiro</b>.</div></div>
@@ -1179,7 +1200,7 @@ const state = {
   tab: "inicio",
   radar: [], plantel: [], jogos: [], caixa: [], acoes: [], equipe: [], log: [], patrocinios: [], planos: [],
   plano: null, planoSujo: false,   // escalação em montagem no Plano de jogo (só vai para o banco ao tocar em Salvar)
-  ligaCfg: {}, finCfg: {}, patCfg: {}, finSec: "geral", sim: { add: [], rem: [] }, fSort: { key: "custo", dir: -1 },
+  ligaCfg: {}, finCfg: {}, patCfg: {}, finSec: "geral", sim: { add: [] }, fSort: { key: "custo", dir: -1 },
   usuario: (() => { try { return localStorage.getItem("amdc_usuario") || ""; } catch { return ""; } })(),
   config: { ...CONFIG_PADRAO, ideal: { ...IDEAL_PADRAO } },
   compare: [],               // [{ col: "radar" | "plantel", id }]
@@ -1630,6 +1651,7 @@ function renderPlantel() {
   $("#plantel-pend").innerHTML = loading || !r.pend.length ? "" : `<div class="banner warn" style="margin-top:12px">📄 <div><b>${r.pend.length} atleta${r.pend.length === 1 ? "" : "s"} com cadastro incompleto</b> — falta${Object.entries(pendDocs).filter(([, v]) => v).length > 1 ? "m" : ""}: ${Object.entries(pendDocs).filter(([, v]) => v).map(([k, v]) => `${k} (${v})`).join(", ")}. Esses dados são necessários para a inscrição na liga: toque no atleta para completar. Os atletas aparecem com a etiqueta <span class="tag warn">Docs pendentes</span>.</div></div>`;
 
   $("#plantel-posmap").innerHTML = loading ? "" : posMapHTML();
+  $("#plantel-sim").innerHTML = loading ? "" : simuladorHTML();
 
   $("#plantel-meters").innerHTML = loading ? "" : ["sertaozinho", "fora"].map(o => {
     const used = o === "sertaozinho" ? r.sz : r.fo, cap = VAGAS[o];
@@ -1861,9 +1883,9 @@ function budgetHTML(gasto1, gasto2) {
     <div class="legend"><span style="--c:var(--navy)">Gasto atual do elenco</span><span style="--c:#F3D48F">Faixa do teto</span><span style="--c:var(--good)">Verde: abaixo da faixa</span><span style="--c:var(--warn)">Amarelo: dentro da faixa</span><span style="--c:var(--bad)">Vermelho: acima do limite</span></div>
   </div>`;
 }
-function carencias() {
+function carencias(lista = state.plantel) {
   const ideal = state.config.ideal;
-  const cnt = pos => state.plantel.filter(p => p.posicao === pos).length;
+  const cnt = pos => lista.filter(p => p.posicao === pos).length;
   const faltas = {};
   POSICOES.forEach(pos => { faltas[pos] = (ideal[pos] || 0) - cnt(pos); });
   // Pontas sem lado definido ("Ponta") cobrem primeiro as vagas de ponta direita e depois de ponta esquerda
@@ -2583,7 +2605,7 @@ const getHelp = () => [
       <li><b>Início</b> — o painel do dia: pendências, montagem do elenco, próximo jogo (com quem confirmou presença e a contagem para a estreia) e as últimas alterações. Assuntos de dinheiro ficam no Financeiro.</li>
       <li><b>Jogos</b> — calendário da temporada, presença e folha de pagamento de cada jogo.</li>
       <li><b>Patrocínios</b> — quem patrocina o uniforme 1, o uniforme 2, o banner e o Instagram, os espaços livres para vender e quanto falta receber.</li>
-      <li><b>Financeiro</b> — todo o dinheiro do clube: planejamento do elenco antes do campeonato, simulador de contratações, orçamento previsto × realizado e o caixa (entradas, saídas, pizzas, rifas, contas a pagar).</li>
+      <li><b>Financeiro</b> — todo o dinheiro do clube: planejamento do elenco antes do campeonato, orçamento previsto × realizado e o caixa (entradas, saídas, pizzas, rifas, contas a pagar).</li>
       <li><b>Plantel 2027</b> — os atletas contratados (25 vagas: 16 de Sertãozinho e 9 de fora), com os gastos calculados automaticamente.</li>
       <li><b>Radar</b> — jogadores que o AMDC quer, mas ainda não contratou. É a "lista de mira": nenhum nome se perde.</li>
       <li><b>Plano de jogo</b> — monte escalações no campo com jogadores do Plantel e do Radar, misturando os dois, e veja custo, vagas e quem está fora de posição.</li>
@@ -2627,7 +2649,7 @@ const getHelp = () => [
       <li><b>Visão geral:</b> responde "a conta da temporada fecha?". Mostra o resultado previsto, o saldo do caixa, o que falta pagar e o custo do elenco.</li>
       <li><b>Planejamento do elenco:</b> para o pré-campeonato. Escolha o <b>cenário</b> (até onde o time vai) e veja o custo por jogo, o total da temporada, a média por jogador, o teto, para onde vai o dinheiro e o valor de cada atleta.</li>
       <li><b>📄 Relatório da temporada:</b> botão no topo do Financeiro. Monta um relatório completo para a diretoria: jogos e resultados, quanto cada atleta recebeu, luvas, orçamento previsto × realizado, caixa por categoria, pizzas/rifas/eventos, patrocínios e plantel. Toque em <b>Salvar PDF</b> e escolha "Salvar como PDF". Não mostra CPF nem data de nascimento.</li>
-      <li><b>Simulador:</b> dentro do planejamento. Marque jogadores do Radar para "contratar" ou do Plantel para "tirar" e veja o impacto na hora. Nada é salvo.</li>
+      <li><b>Simular contratações:</b> fica na aba <b>Plantel</b>. Marque jogadores do Radar e veja o impacto antes de decidir.</li>
       <li><b>Orçamento da temporada:</b> preencha quanto espera gastar (uniformes, inscrição, material…) e arrecadar (patrocínio, pizzas, rifas…). Os gastos com atletas são automáticos. O <b>realizado</b> vem sozinho do Caixa.</li>
       <li><b>Caixa:</b> o dinheiro de verdade: entradas, saídas, pizzas/rifas/eventos e contas a pagar.</li>
     </ol>
@@ -2705,6 +2727,7 @@ const getHelp = () => [
       <li><b>Vaga tracejada</b> = livre (toque para cadastrar). <b>Vaga preenchida</b> = atleta contratado (toque para ver ou editar).</li>
       <li><b>Cadastro obrigatório:</b> nome completo, CPF, data de nascimento e origem (Sertãozinho ou de fora). O CPF é conferido automaticamente e não pode se repetir.</li>
       <li><b>CPF protegido:</b> na lista e no cadastro ele aparece escondido (ex.: ***.982.247-**). Se precisar do número inteiro (para a ficha da Liga, por exemplo), abra o atleta e toque em <b>👁 Ver CPF completo</b>. Fica registrado no histórico quem viu. Para trocar o CPF, é só digitar o novo no campo; deixando em branco, o que já estava continua guardado.</li>
+      <li><b>🧮 Simular contratações:</b> marque um ou mais jogadores do Radar e veja, nesta ordem: <b>quanto vamos gastar a mais</b> (por jogo e ao todo até a final, com luvas e bônus garantidos), como fica o <b>teto por jogo</b>, quantas <b>vagas</b> de Sertãozinho e de fora sobram e quantos ainda <b>faltam na posição</b>. Tem resumo para o WhatsApp. Nada é salvo: ninguém é contratado.</li>
       <li><b>No cadastro do atleta</b> você também pode: <b>Excluir</b>, <b>Devolver ao radar</b> (a vaga fica livre) ou <b>⇆ Comparar com o radar</b>.</li>
       <li><b>Idade do elenco:</b> média de idade e quantos são sub-23, de 23 a 30 e acima de 30.</li>
       <li><b>Lista do elenco:</b> documentos, contato, situação na Liga e custo por jogo. Os valores completos (luvas, bônus, temporada) ficam na aba <b>Financeiro → Planejamento do elenco</b>.</li>
@@ -4418,7 +4441,6 @@ function renderFinPlano() {
       <div class="foot">${r.chutEntregues} entregue${r.chutEntregues === 1 ? "" : "s"} · o valor entra no orçamento em "Chuteiras e material"</div></div>`;
   $("#fin-budget").innerHTML = budgetHTML(pl.porJogo, pl.porJogo2);
   renderFinDist(pl);
-  renderSimulador();
   renderFinTable();
 }
 function renderFinDist(pl) {
@@ -4443,44 +4465,90 @@ function renderFinDist(pl) {
   </div>`;
 }
 
-/* ---------- Simulador (não salva nada) ---------- */
-function renderSimulador() {
-  const sim = state.sim, c = cenarioAtual();
-  const radar = state.radar.filter(p => p.status !== "recusou").sort((a, b) => (prioRank(a) - prioRank(b)) || (custoJogo(a) - custoJogo(b)));
-  const plantel = [...state.plantel].sort((a, b) => custoJogo(b) - custoJogo(a));
-  const add = radar.filter(p => sim.add.includes(p.id)), rem = plantel.filter(p => sim.rem.includes(p.id));
-  const novo = [...state.plantel.filter(p => !sim.rem.includes(p.id)), ...add];
-  const a = planoElenco(state.plantel, c), b = planoElenco(novo, c);
+/* ---------- Simulador de contratações (aba Plantel; não salva nada) ---------- */
+// Sempre no cenário "Chegando à final" (decisão do Chico): o total é o máximo que a temporada pode custar.
+function simulacao() {
+  const C = CENARIOS.find(c => c.v === "final");
+  const radar = state.radar.filter(p => p.status !== "recusou");
+  const add = radar.filter(p => state.sim.add.includes(p.id));
+  const novo = [...state.plantel, ...add];
+  const a = planoElenco(state.plantel, C), b = planoElenco(novo, C);
   const cnt = (lista, o) => lista.filter(p => p.origem === o).length;
-  const vz = { sertaozinho: cnt(novo, "sertaozinho"), fora: cnt(novo, "fora") };
-  const indef = add.filter(p => p.origem !== "sertaozinho" && p.origem !== "fora").length;
-  const sa = statusTeto(Math.max(a.porJogo, a.porJogo2)), sb = statusTeto(Math.max(b.porJogo, b.porJogo2));
-  const delta = (x, y) => { const d = y - x; return Math.abs(d) < 0.005 ? `<span class="hint">sem mudança</span>` : `<span class="${d > 0 ? "sai" : "ent"}">${d > 0 ? "+" : "−"}${money(Math.abs(d))}</span>`; };
-  const ativo = add.length || rem.length;
-  const item = (p, lista, tipo) => `<label class="${lista.includes(p.id) ? "on" : ""}"><input type="checkbox" data-act="sim-toggle" data-tipo="${tipo}" data-id="${esc(p.id)}" ${lista.includes(p.id) ? "checked" : ""}><span>${esc(firstLast(p.nome))}<small>${esc(POS_SIGLA[p.posicao] || "?")} · ${p.origem === "fora" ? "de fora" : p.origem === "sertaozinho" ? "Sertãozinho" : "origem a definir"}${tipo === "add" && PRIO_LABEL[p.prioridade] ? ` · ${esc(PRIO_LABEL[p.prioridade])}` : ""}</small></span><b>${money(custoJogo(p))}</b></label>`;
-  $("#fin-sim").innerHTML = `<div class="sim">
-    <div class="sim-cols">
-      <div class="panel"><h3>➕ Contratar do Radar</h3>${radar.length ? `<div class="sim-list">${radar.map(p => item(p, sim.add, "add")).join("")}</div>` : `<p class="hint">Nenhum jogador ativo no Radar.</p>`}</div>
-      <div class="panel"><h3>➖ Tirar do plantel</h3>${plantel.length ? `<div class="sim-list">${plantel.map(p => item(p, sim.rem, "rem")).join("")}</div>` : `<p class="hint">Plantel vazio.</p>`}</div>
+  const vagas = ["sertaozinho", "fora"].map(o => ({ o, l: o === "fora" ? "De fora" : "Sertãozinho", total: VAGAS[o], hoje: VAGAS[o] - cnt(state.plantel, o), depois: VAGAS[o] - cnt(novo, o) }));
+  const indef = add.filter(p => p.origem !== "sertaozinho" && p.origem !== "fora");
+  const tetoA = Math.max(a.porJogo, a.porJogo2), tetoB = Math.max(b.porJogo, b.porJogo2);
+  const faltaA = Object.fromEntries(carencias().map(g => [g.pos, g.falta])), faltaB = Object.fromEntries(carencias(novo).map(g => [g.pos, g.falta]));
+  const ideal = state.config.ideal;
+  const posicoes = [...new Set(add.map(p => p.posicao).filter(Boolean))].map(pos => {
+    const doRadar = radar.filter(p => p.posicao === pos).sort((x, y) => custoJogo(x) - custoJogo(y));
+    return { pos, ideal: ideal[pos] || 0, temos: state.plantel.filter(p => p.posicao === pos).length, com: novo.filter(p => p.posicao === pos).length,
+      faltaHoje: faltaA[pos] || 0, falta: faltaB[pos] || 0, escolhidos: add.filter(p => p.posicao === pos),
+      outros: doRadar.filter(p => !state.sim.add.includes(p.id)).length, ranking: doRadar };
+  });
+  return { C, radar, add, novo, a, b, vagas, indef, tetoA, tetoB, posicoes, semPos: add.filter(p => !p.posicao) };
+}
+const custoAteFinal = (p, C) => tempCen(p, C) + num(p.assinatura) + bonusFixo(p);
+function rankTxt(p, lista) {
+  if (lista.length < 2) return "única opção no radar para essa posição";
+  const i = lista.findIndex(x => x.id === p.id);
+  return i === 0 ? `o mais barato das ${lista.length} opções do radar` : i === lista.length - 1 ? `o mais caro das ${lista.length} opções do radar` : `${i + 1}º mais barato de ${lista.length} opções do radar`;
+}
+function simuladorHTML() {
+  const S = simulacao(), { a, b, C } = S;
+  const radarOrd = [...S.radar].sort((x, y) => (prioRank(x) - prioRank(y)) || String(x.posicao || "").localeCompare(String(y.posicao || ""), "pt-BR") || (custoJogo(x) - custoJogo(y)));
+  const item = p => { const on = state.sim.add.includes(p.id); return `<label class="${on ? "on" : ""}"><input type="checkbox" data-act="sim-toggle" data-tipo="add" data-id="${esc(p.id)}" ${on ? "checked" : ""}><span>${esc(firstLast(p.nome))}<small>${esc(POS_SIGLA[p.posicao] || "?")} · ${p.origem === "fora" ? "de fora" : p.origem === "sertaozinho" ? "Sertãozinho" : "origem a definir"}${PRIO_LABEL[p.prioridade] ? ` · ${esc(PRIO_LABEL[p.prioridade])}` : ""}</small></span><b>${money(custoJogo(p))}<small>/jogo</small></b></label>`; };
+  const lista = `<div class="panel"><h3>➕ Jogadores do Radar</h3><p class="hint" style="margin:0 0 10px">Marque quem você quer trazer. Para <b>somar outro</b>, é só marcar mais um.</p>${radarOrd.length ? `<div class="sim-list">${radarOrd.map(item).join("")}</div>` : `<p class="hint">Nenhum jogador ativo no Radar. Cadastre na aba Radar.</p>`}</div>`;
+  if (!S.add.length) return `<div class="sim-cols">${lista}<div class="panel sim-res"><h3>Resultado</h3><p class="hint" style="margin:0">Marque ao lado um ou mais jogadores do Radar. Aqui aparece, na ordem: <b>💰 quanto a mais</b>, <b>🚦 teto por jogo</b>, <b>🎽 vagas</b> e <b>📍 posição</b>. <b>Nada é salvo</b>: é só uma simulação.</p></div></div>`;
+  const mais = v => `<span class="${v > 0.004 ? "sai" : v < -0.004 ? "ent" : ""}">${v > 0.004 ? "+" : v < -0.004 ? "−" : ""}${money(Math.abs(v))}</span>`;
+  const difFase = Math.abs((b.porJogo2 - a.porJogo2) - (b.porJogo - a.porJogo)) > 0.004;
+  const nomes = S.add.map(p => esc(firstLast(p.nome))).join(", ");
+  // 1. Quanto a mais
+  const b1 = `<div class="sim-bloco"><h4>💰 1. Quanto vamos gastar a mais</h4>
+    <div class="sim-nums">
+      <div><span>Por jogo${difFase ? " · 1ª fase" : ""}</span><b>${mais(b.porJogo - a.porJogo)}</b></div>
+      ${difFase ? `<div><span>Por jogo · 2ª fase</span><b>${mais(b.porJogo2 - a.porJogo2)}</b></div>` : ""}
+      <div class="destaque"><span>Ao todo, até a final</span><b>${mais(b.total - a.total)}</b></div>
     </div>
-    <div class="panel sim-res"><h3>Resultado da simulação ${ativo ? `<button class="btn sm ghost" data-act="sim-limpar">Limpar</button>` : ""}</h3>
-      ${!ativo ? `<p class="hint" style="margin:0">Marque jogadores do Radar para contratar ou do Plantel para tirar e veja aqui, na hora, o impacto no orçamento. <b>Nada é salvo</b>: é só uma simulação.</p>` : `
-      <table class="simtab"><thead><tr><th></th><th class="num">Hoje</th><th class="num">Simulado</th><th class="num">Diferença</th></tr></thead><tbody>
-        <tr><td>Atletas</td><td class="num">${a.n}</td><td class="num"><b>${b.n}</b></td><td class="num">${b.n - a.n > 0 ? "+" : ""}${b.n - a.n}</td></tr>
-        <tr><td>Gasto por jogo (1ª fase)</td><td class="num">${money(a.porJogo)}</td><td class="num"><b>${money(b.porJogo)}</b></td><td class="num">${delta(a.porJogo, b.porJogo)}</td></tr>
-        <tr><td>Gasto por jogo (2ª fase)</td><td class="num">${money(a.porJogo2)}</td><td class="num"><b>${money(b.porJogo2)}</b></td><td class="num">${delta(a.porJogo2, b.porJogo2)}</td></tr>
-        <tr><td>Média por jogador</td><td class="num">${money(a.media)}</td><td class="num"><b>${money(b.media)}</b></td><td class="num">${delta(a.media, b.media)}</td></tr>
-        <tr><td>Luvas + bônus garantidos</td><td class="num">${money(a.luvas + a.bonusGar)}</td><td class="num"><b>${money(b.luvas + b.bonusGar)}</b></td><td class="num">${delta(a.luvas + a.bonusGar, b.luvas + b.bonusGar)}</td></tr>
-        <tr><td>Elenco na temporada<br><small class="hint">${esc(c.l.toLowerCase())}</small></td><td class="num">${money(a.total)}</td><td class="num"><b>${money(b.total)}</b></td><td class="num">${delta(a.total, b.total)}</td></tr>
-      </tbody></table>
-      <div class="sim-flags">
-        <span class="tag ${sb.cls}">Teto: ${sb.t}</span>${sa.cls !== sb.cls ? `<span class="hint">(hoje: ${sa.t.toLowerCase()})</span>` : ""}
-        <span class="tag ${vz.sertaozinho > VAGAS.sertaozinho ? "bad" : "neutral"}">Sertãozinho ${vz.sertaozinho}/${VAGAS.sertaozinho}</span>
-        <span class="tag ${vz.fora > VAGAS.fora ? "bad" : "neutral"}">De fora ${vz.fora}/${VAGAS.fora}</span>
-        ${indef ? `<span class="tag warn">${indef} com origem a definir</span>` : ""}
-        ${novo.length > TOTAL_VAGAS ? `<span class="tag bad">Passa das ${TOTAL_VAGAS} vagas</span>` : ""}
-      </div>`}
-    </div></div>`;
+    <p class="hint" style="margin:8px 0 0">Até a final = ${a.j1} jogos da 1ª fase + ${a.j2} da 2ª (${a.j1 + a.j2} jogos): ${money(b.jogos - a.jogos)} em jogos${b.luvas - a.luvas > 0.004 ? ` + ${money(b.luvas - a.luvas)} de luvas` : ""}${b.bonusGar - a.bonusGar > 0.004 ? ` + ${money(b.bonusGar - a.bonusGar)} de bônus garantidos` : ""}.</p>
+    ${S.add.length > 1 ? `<table class="simtab" style="margin-top:8px"><thead><tr><th>Jogador</th><th class="num">Por jogo</th><th class="num">Até a final</th></tr></thead><tbody>${S.add.map(p => `<tr><td>${esc(firstLast(p.nome))}</td><td class="num">${money(custoJogo(p))}</td><td class="num">${money(custoAteFinal(p, C))}</td></tr>`).join("")}</tbody></table>` : ""}
+  </div>`;
+  // 2. Teto
+  const ta = statusTeto(S.tetoA), tb = statusTeto(S.tetoB);
+  const b2 = `<div class="sim-bloco"><h4>🚦 2. Teto por jogo</h4>
+    <p style="margin:0">O elenco passa de <b>${money(S.tetoA)}</b> para <b>${money(S.tetoB)}</b> por jogo${difFase ? " (na fase mais cara)" : ""}.</p>
+    <div class="sim-flags"><span class="tag ${tb.cls}">${tb.t}</span>${ta.cls !== tb.cls ? `<span class="hint">hoje: ${ta.t.toLowerCase()}</span>` : ""}</div>
+  </div>`;
+  // 3. Vagas
+  const vg = v => v.depois < 0 ? `<span class="tag bad">Faltariam ${-v.depois} vaga${v.depois === -1 ? "" : "s"}</span>` : `<span class="tag ${v.depois === 0 ? "warn" : "neutral"}">Sobra${v.depois === 1 ? "" : "m"} ${v.depois} de ${v.total}</span>`;
+  const b3 = `<div class="sim-bloco"><h4>🎽 3. Vagas no plantel</h4>
+    ${S.vagas.map(v => `<div class="sim-linha"><span>${v.l}</span>${vg(v)}<small class="hint">hoje sobram ${v.hoje}</small></div>`).join("")}
+    ${S.indef.length ? `<div class="sim-linha"><span class="tag warn">Origem a definir: ${S.indef.map(p => esc(firstLast(p.nome))).join(", ")}</span><small class="hint">não entra na conta das vagas até definir</small></div>` : ""}
+  </div>`;
+  // 4. Posição
+  const posTxt = g => g.falta > 0 ? `<span class="tag bad">Ainda falta${g.falta > 1 ? "m" : ""} ${g.falta}</span>` : g.com > g.ideal ? `<span class="tag warn">Fica ${g.com - g.ideal} acima do ideal</span>` : `<span class="tag good">Posição completa</span>`;
+  const b4 = `<div class="sim-bloco"><h4>📍 4. Posição</h4>
+    ${S.posicoes.map(g => `<div class="sim-pos"><div class="sim-linha"><b>${esc(g.pos)}</b><span>temos ${g.temos} · ideal ${g.ideal} · com ${g.escolhidos.length === 1 ? "ele" : "eles"}: ${g.com}</span>${posTxt(g)}</div>
+      <small class="hint">${g.escolhidos.map(p => `${esc(firstLast(p.nome))}: ${rankTxt(p, g.ranking)}`).join(" · ")}${g.outros ? ` · ainda há ${g.outros} outra${g.outros === 1 ? "" : "s"} opç${g.outros === 1 ? "ão" : "ões"} no radar` : ""}</small></div>`).join("")}
+    ${S.semPos.length ? `<div class="sim-linha"><span class="tag warn">Sem posição cadastrada: ${S.semPos.map(p => esc(firstLast(p.nome))).join(", ")}</span></div>` : ""}
+  </div>`;
+  return `<div class="sim-cols">${lista}<div class="panel sim-res"><h3>E se trouxermos ${nomes}? <span class="spacer"></span><button class="btn sm ghost" data-act="sim-limpar">Limpar</button></h3>
+    ${b1}${b2}${b3}${b4}
+    <div class="sim-acts"><span class="hint">Nada foi salvo: é só uma simulação.</span><button class="btn sm" data-act="sim-resumo">📲 Resumo para WhatsApp</button></div>
+  </div></div>`;
+}
+function renderSimulador() { if ($("#plantel-sim")) $("#plantel-sim").innerHTML = simuladorHTML(); }
+function resumoSimulacao() {
+  const S = simulacao(), { a, b } = S;
+  const nm = S.add.map(p => `${firstLast(p.nome)} (${POS_SIGLA[p.posicao] || "?"}, ${p.origem === "fora" ? "de fora" : p.origem === "sertaozinho" ? "Sertãozinho" : "origem a definir"})`);
+  const tb = statusTeto(S.tetoB);
+  const L = [cabecalhoResumo("Simulação de contratação"), ["*E SE TROUXERMOS DO RADAR*", ...nm.map(n => "• " + n)],
+    ["*1. QUANTO A MAIS*", `• Por jogo: +${money(b.porJogo - a.porJogo)}${Math.abs((b.porJogo2 - a.porJogo2) - (b.porJogo - a.porJogo)) > 0.004 ? ` (2ª fase: +${money(b.porJogo2 - a.porJogo2)})` : ""}`,
+      `• Ao todo, até a final (${a.j1 + a.j2} jogos, com luvas e bônus garantidos): +${money(b.total - a.total)}`],
+    ["*2. TETO POR JOGO*", `• De ${money(S.tetoA)} para ${money(S.tetoB)}: ${tb.t.toLowerCase()}`],
+    ["*3. VAGAS*", ...S.vagas.map(v => `• ${v.l}: ${v.depois < 0 ? `faltariam ${-v.depois} vaga(s)` : `sobram ${v.depois} de ${v.total}`}`), ...(S.indef.length ? [`• Origem a definir: ${S.indef.map(p => firstLast(p.nome)).join(", ")}`] : [])],
+    ["*4. POSIÇÃO*", ...S.posicoes.map(g => `• ${g.pos}: temos ${g.temos}, ideal ${g.ideal}, ficaríamos com ${g.com}${g.falta > 0 ? ` · ainda falta(m) ${g.falta}` : " · completa"}`)],
+    ["_Simulação: ninguém foi contratado._"]];
+  return juntarBlocos(L);
 }
 
 /* ---------- Tabela financeira por atleta ---------- */
@@ -5018,7 +5086,8 @@ document.addEventListener("click", async e => {
     if (await opsDoc("config", "financeiro", [{ c: ["cenario"], v: c.v }, { c: ["atualizadoPor"], v: state.usuario || "" }], state.finCfg)) { toast(`Planejando: ${c.l.toLowerCase()}`, "good"); registrar(`mudou o cenário do planejamento para "${c.l}"`); }
     return;
   }
-  if (act === "sim-limpar") { state.sim = { add: [], rem: [] }; return renderSimulador(); }
+  if (act === "sim-limpar") { state.sim = { add: [] }; return renderSimulador(); }
+  if (act === "sim-resumo") return abrirTexto("Resumo da simulação", "Contratações simuladas a partir do Radar (nada foi salvo)", resumoSimulacao());
   if (act === "fsort") {
     const k = el.dataset.key;
     state.fSort = state.fSort.key === k ? { key: k, dir: -state.fSort.dir } : { key: k, dir: ["nome", "posicao", "origem"].includes(k) ? 1 : -1 };
