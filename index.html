@@ -177,6 +177,52 @@ body.com-relatorio{overflow:hidden}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 .banner.info{background:var(--royal-soft);color:var(--navy-3)}
+/* ---------- Plano de jogo ---------- */
+.pj-barra{display:flex;flex-wrap:wrap;gap:10px 12px;align-items:flex-end}
+.pj-barra .f{margin:0}
+.pj-acoes{display:flex;flex-wrap:wrap;gap:6px}
+.pj-status{flex-basis:100%;margin:2px 0 0}
+.plano-wrap{display:grid;grid-template-columns:minmax(300px,500px) 1fr;gap:16px;align-items:start;margin-top:14px}
+@media (max-width:900px){.plano-wrap{grid-template-columns:1fr}}
+.campo{position:relative;aspect-ratio:68/100;width:100%;background:repeating-linear-gradient(180deg,#2E8B4A 0 10%,#2A7F44 10% 20%);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;user-select:none;-webkit-user-select:none}
+.campo>div{position:absolute;border:2px solid rgba(255,255,255,.75);pointer-events:none}
+.campo .l-borda{inset:2.5%;border-radius:3px}
+.campo .l-meio{left:2.5%;right:2.5%;top:50%;height:0;border-width:2px 0 0}
+.campo .l-circ{left:50%;top:50%;width:26%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%}
+.campo .l-area{left:22%;right:22%;height:15%}.campo .l-area.t{top:2.5%;border-top:0}.campo .l-area.b{bottom:2.5%;border-bottom:0}
+.campo .l-peq{left:36%;right:36%;height:6%}.campo .l-peq.t{top:2.5%;border-top:0}.campo .l-peq.b{bottom:2.5%;border-bottom:0}
+.jog{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:3px;width:24%;background:none;border:0;padding:0;cursor:grab;touch-action:none;z-index:2}
+.jog .bola{width:42px;height:42px;border-radius:50%;background:#fff;color:var(--navy);display:grid;place-items:center;font-weight:800;font-size:13px;border:3px solid var(--navy);box-shadow:0 2px 6px rgba(0,0,0,.35)}
+.jog.radar .bola{background:#FFF7E3;border-color:#E0A92E}
+.jog.vazio .bola{background:rgba(255,255,255,.15);border:2px dashed #fff;color:#fff;box-shadow:none}
+.jog .nome{font-size:11.5px;font-weight:700;color:#fff;background:rgba(19,28,71,.82);padding:1px 7px;border-radius:6px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jog.vazio .nome{background:rgba(19,28,71,.45)}
+.jog .alerta{position:absolute;top:-4px;left:calc(50% + 12px);width:18px;height:18px;border-radius:50%;background:var(--bad);color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center;border:2px solid #fff}
+.jog.arrastando{z-index:6;cursor:grabbing}.jog.arrastando .bola{transform:scale(1.12)}
+.pj-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.pj-h h3{margin:0}
+.pj-kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pj-kpis div{border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.pj-kpis span{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+.pj-kpis b{display:block;font-family:"Barlow Condensed";font-size:21px;font-variant-numeric:tabular-nums}
+.pj-kpis small{color:var(--muted);font-size:12px}
+.pj-kpis .rad{background:#FFF7E3;border-color:#F3D48F}.pj-kpis .neg b{color:var(--bad)}
+.pj-linha{margin-top:8px;padding:8px 10px;border-radius:10px;font-size:13.5px;background:var(--ice)}
+.pj-linha.ruim{background:var(--warn-soft);color:#6B4508}.pj-linha.boa{background:var(--good-soft);color:#14583A}
+.pj-leg{display:inline-block;width:12px;height:12px;border-radius:50%;border:3px solid var(--navy);vertical-align:-2px;background:#fff}.pj-leg.radar{border-color:#E0A92E;background:#FFF7E3}
+.pj-banco{display:flex;flex-wrap:wrap;gap:8px}
+.pj-chip{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--navy);border-radius:999px;padding:4px 6px 4px 12px;font-size:13.5px;font-weight:600;background:#fff}
+.pj-chip.radar{border-color:#E0A92E;background:#FFF7E3}
+.pj-chip small{display:block;font-size:11px;color:var(--muted);font-weight:500}
+.pj-chip button{border:0;background:#EEF0F5;border-radius:50%;width:24px;height:24px;cursor:pointer;color:var(--muted)}
+.pj-sec{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:10px 0 6px}
+.pj-op{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:6px;cursor:pointer}
+.pj-op:hover{border-color:var(--royal)}.pj-op.on{border-color:var(--royal);background:var(--royal-soft)}
+.pj-op .sig{width:36px;height:36px;border-radius:10px;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:11.5px;font-weight:800;flex:none}
+.pj-op.radar .sig{background:#E0A92E}
+.pj-op .tx{flex:1;min-width:0}.pj-op .tx b{display:block;font-size:14.5px}.pj-op .tx small{color:var(--muted);font-size:12px}
+.pj-op .dir{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex:none}.pj-op .dir small{font-size:12px;color:var(--muted)}
+.pj-op .usado{color:var(--warn) !important;font-weight:700}
+@media (max-width:640px){.jog .bola{width:36px;height:36px;font-size:12px}.jog .nome{font-size:10.5px;padding:1px 5px}.pj-kpis b{font-size:18px}}
 .prazos{display:grid;gap:4px}
 .prazo-row{display:grid;grid-template-columns:1fr 170px 240px;gap:12px;align-items:center;padding:8px 0;border-top:1px solid #EEF1F6}
 .prazo-row .tag{justify-self:start}
@@ -815,6 +861,7 @@ body.readonly .slot.empty{pointer-events:none;opacity:.7}
       <button class="tab" role="tab" data-act="tab" data-tab="patrocinios" id="tab-patrocinios">Patrocínios <span class="count" id="cnt-pat">0</span></button>
       <button class="tab" role="tab" data-act="tab" data-tab="plantel" id="tab-plantel">Plantel <span class="count" id="cnt-plantel">0/25</span></button>
       <button class="tab" role="tab" data-act="tab" data-tab="radar" id="tab-radar">Radar <span class="count" id="cnt-radar">0</span></button>
+      <button class="tab" role="tab" data-act="tab" data-tab="plano" id="tab-plano">Plano de jogo <span class="count" id="cnt-plano">0</span></button>
       <button class="tab" role="tab" data-act="tab" data-tab="liga" id="tab-liga">Liga <span class="count" id="cnt-liga">0/0</span></button>
       </div>
       <div class="tools"><button class="btn wa" data-act="help" data-topic="visao" title="Guia de uso da plataforma"><b style="font-size:15px">?</b><span class="t">Guia</span></button><button class="btn wa" data-act="summary" title="Resumo geral de todo o clube para o WhatsApp"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.8 0-1.4.7-2 1-2.3.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.4.6-.3.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.1.1.6-.1 1.2Z"/></svg><span class="t">Resumo</span></button><button class="btn wa hidden" id="btn-instalar" data-act="instalar" title="Instalar o app do AMDC neste celular">📲<span class="t">Instalar</span></button><button class="btn wa hidden" id="btn-sair" data-act="sair" title="Sair da plataforma neste aparelho">Sair</button></div>
@@ -919,6 +966,22 @@ body.readonly .slot.empty{pointer-events:none;opacity:.7}
     </div>
     <div class="kpis" id="pat-kpis" style="margin-top:14px"></div>
     <div id="pat-areas"></div>
+  </section>
+
+  <!-- ================= PLANO DE JOGO ================= -->
+  <section id="view-plano" class="hidden">
+    <div class="tab-intro">
+      <div>
+        <h2>Plano de jogo</h2>
+        <p>Monte uma escalação no campo com jogadores do <b>Plantel</b> e do <b>Radar</b>, misturando os dois, e teste formações. Veja o custo, se cabe nas vagas e quem está fora de posição. <b>Nada é salvo</b> até você tocar em 💾 Salvar.</p>
+      </div>
+      <div class="intro-acts"><button class="help-link sum" data-act="summary-tab" data-tab="plano" title="Resumo só desta aba, pronto para o WhatsApp"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Z"/></svg> Resumo desta aba</button><button class="help-link" data-act="help" data-topic="plano">? Como funciona</button></div>
+    </div>
+    <div class="panel pj-barra" id="plano-barra" style="margin-top:14px"></div>
+    <div class="plano-wrap">
+      <div><div class="campo" id="plano-campo"></div></div>
+      <div class="pj-lado"><div class="panel" id="plano-analise"></div><div class="panel" id="plano-banco" style="margin-top:14px"></div></div>
+    </div>
   </section>
 
   <section id="view-liga" class="hidden">
@@ -1091,8 +1154,8 @@ const PRIO_ORDEM = { "principal": 0, "opcao-b": 1, "reserva": 2 };
 const prioRank = p => PRIO_ORDEM[p.prioridade] ?? 3;
 const prioTag = p => p.prioridade && PRIO_LABEL[p.prioridade] ? `<span class="prio ${p.prioridade}">${PRIO_LABEL[p.prioridade]}</span>` : "";
 const MAX_CMP = 4;
-const TABS = ["inicio", "jogos", "financeiro", "patrocinios", "plantel", "radar", "liga"];
-const COLECOES_EXTRA = ["jogos", "caixa", "acoes", "equipe", "log", "patrocinios"];
+const TABS = ["inicio", "jogos", "financeiro", "patrocinios", "plantel", "radar", "plano", "liga"];
+const COLECOES_EXTRA = ["jogos", "caixa", "acoes", "equipe", "log", "patrocinios", "planos"];
 const IDEAL_PADRAO = { "Goleiro": 3, "Zagueiro": 4, "Lateral direito": 2, "Lateral esquerdo": 2, "Volante": 3, "Meia": 3, "Meia-atacante": 2, "Ponta direita": 2, "Ponta esquerda": 2, "Ponta": 0, "Centroavante": 2 };
 const CONFIG_PADRAO = { tetoMin: 6000, tetoMax: 8000, jogos1: 11, jogos2: 5, ideal: IDEAL_PADRAO };
 
@@ -1101,14 +1164,15 @@ const CONFIG_PADRAO = { tetoMin: 6000, tetoMax: 8000, jogos1: 11, jogos2: 5, ide
    ========================================================= */
 const state = {
   tab: "inicio",
-  radar: [], plantel: [], jogos: [], caixa: [], acoes: [], equipe: [], log: [], patrocinios: [],
+  radar: [], plantel: [], jogos: [], caixa: [], acoes: [], equipe: [], log: [], patrocinios: [], planos: [],
+  plano: null, planoSujo: false,   // escalação em montagem no Plano de jogo (só vai para o banco ao tocar em Salvar)
   ligaCfg: {}, finCfg: {}, patCfg: {}, finSec: "geral", sim: { add: [], rem: [] }, fSort: { key: "custo", dir: -1 },
   usuario: (() => { try { return localStorage.getItem("amdc_usuario") || ""; } catch { return ""; } })(),
   config: { ...CONFIG_PADRAO, ideal: { ...IDEAL_PADRAO } },
   compare: [],               // [{ col: "radar" | "plantel", id }]
   sigilo: {},                // CPFs (área restrita: só presidente e editores leem)
   cmpOpen: false,
-  loaded: { radar: false, plantel: false, jogos: false, caixa: false, acoes: false, equipe: false, log: false, patrocinios: false },
+  loaded: { radar: false, plantel: false, jogos: false, caixa: false, acoes: false, equipe: false, log: false, patrocinios: false, planos: false },
   mode: "loading",           // loading | cloud | local | error
   readOnly: false,
   pSort: { key: "nome", dir: 1 },
@@ -1455,7 +1519,7 @@ const vagasLivres = (origem, exceptId) =>
    ========================================================= */
 function renderAll() {
   renderHeader(); renderBanner(); renderWelcome();
-  const R = { inicio: renderInicio, jogos: renderJogos, financeiro: renderFinanceiro, patrocinios: renderPatrocinios, plantel: renderPlantel, radar: renderRadar, liga: renderLiga };
+  const R = { inicio: renderInicio, jogos: renderJogos, financeiro: renderFinanceiro, patrocinios: renderPatrocinios, plantel: renderPlantel, radar: renderRadar, plano: renderPlano, liga: renderLiga };
   (R[state.tab] || renderInicio)();
   if (state.jogoOpen) renderJogoModal();
   if (state.acaoOpen) renderAcaoModal();
@@ -2384,6 +2448,8 @@ const RESUMOS_ABA = {
     opts: [["fin", "Valores financeiros", true]] },
   patrocinios: { titulo: "Resumo dos Patrocínios", sub: "Quem patrocina o quê e os espaços livres", fn: resumoAbaPatrocinios,
     opts: [["fin", "Valores", true], ["livres", "Espaços livres (para vender)", true]] },
+  plano: { titulo: "Resumo do Plano de jogo", sub: "A escalação que está no campo agora", fn: resumoAbaPlano,
+    opts: [["fin", "Custo e vagas", true]] },
   liga: { titulo: "Resumo da Liga", sub: "Documentação, aptos a jogar e Copa Fácil", fn: resumoAbaLiga,
     opts: [["aptos", "Lista de aptos", true], ["equipe", "Comissão e diretoria", false]] },
 };
@@ -2484,6 +2550,7 @@ const getHelp = () => [
       <li><b>Financeiro</b> — todo o dinheiro do clube: planejamento do elenco antes do campeonato, simulador de contratações, orçamento previsto × realizado e o caixa (entradas, saídas, pizzas, rifas, contas a pagar).</li>
       <li><b>Plantel 2027</b> — os atletas contratados (25 vagas: 16 de Sertãozinho e 9 de fora), com os gastos calculados automaticamente.</li>
       <li><b>Radar</b> — jogadores que o AMDC quer, mas ainda não contratou. É a "lista de mira": nenhum nome se perde.</li>
+      <li><b>Plano de jogo</b> — monte escalações no campo com jogadores do Plantel e do Radar, misturando os dois, e veja custo, vagas e quem está fora de posição.</li>
       <li><b>Liga</b> — documentação para a Liga dos Árbitros, Copa Fácil, comissão técnica e diretoria.</li>
     </ol>
     <div class="hl">Toque em <b>👤</b> no topo para dizer quem você é. Assim o histórico mostra quem marcou cada pagamento ou alteração.</div>
@@ -2547,6 +2614,17 @@ const getHelp = () => [
       <li><b>💰 Registrar recebimento</b> lança a entrada no Caixa como "Patrocínio", ligada ao patrocinador. Assim a aba mostra <b>combinado × recebido × falta receber</b>, sem lançar duas vezes.</li>
     </ol>
     <div class="hl">Entradas de patrocínio lançadas direto no Caixa também podem ser ligadas: ao escolher a categoria "Patrocínio", aparece o campo <b>Patrocinador</b>.</div>` },
+  { id: "plano", ic: "📋", t: "Plano de jogo (escalação no campo)", h: `
+    <ol>
+      <li>Escolha a <b>formação</b> (4-4-2, 4-3-3, 4-2-3-1, 4-1-4-1, 3-5-2 ou 5-3-2). O campo mostra as 11 posições.</li>
+      <li><b>Toque numa posição</b> para escolher quem joga ali. Aparecem primeiro os jogadores <b>daquela posição</b>, do <b>Plantel</b> (borda azul) e do <b>Radar</b> (borda amarela, ainda não contratados). Dá para misturar os dois.</li>
+      <li><b>Arraste</b> um jogador para mudar o lugar dele no campo (ex.: lateral mais avançado). Solte em cima de outro jogador para <b>trocar os dois</b> de posição.</li>
+      <li>Em <b>Banco de reservas</b>, adicione até 12 reservas.</li>
+      <li>A <b>Análise</b> mostra: o custo por jogo dos titulares e do banco, quanto custaria a mais contratar os do radar (e as luvas), como ficariam as <b>vagas</b> de Sertãozinho e de fora e quem está <b>fora de posição</b> (marcado com <b style="color:var(--bad)">!</b>).</li>
+      <li><b>Nada é salvo sozinho.</b> Toque em <b>💾 Salvar</b> para guardar o plano com um nome. Depois, ele aparece em "Planos salvos" para toda a diretoria. <b>Salvar como novo</b> cria uma cópia para testar variações.</li>
+      <li><b>📷 Imagem</b> gera uma figura do campo (sem valores) para mandar no WhatsApp.</li>
+    </ol>
+    <div class="hl">O plano é só uma simulação: <b>não contrata nem muda ninguém</b> no Plantel ou no Radar.</div>` },
   { id: "liga", ic: "📑", t: "Liga: documentação e Copa Fácil", h: `
     <ul>
       <li><b>Atleta de Sertãozinho:</b> ficha de atleta entregue na Liga dos Árbitros + cadastro no Copa Fácil.</li>
@@ -2676,7 +2754,7 @@ function jumpHelp(topic) {
    Versão Google: login com senha + dados na planilha (Apps Script)
    ========================================================= */
 const SENHA_KEY = "amdc_senha_v1";
-const GSS = { senha: null, data: { radar: {}, plantel: {}, sigilo: {}, config: {}, jogos: {}, caixa: {}, acoes: {}, equipe: {}, log: {}, patrocinios: {} }, ver: -1, ls: [], timer: null };
+const GSS = { senha: null, data: { radar: {}, plantel: {}, sigilo: {}, config: {}, jogos: {}, caixa: {}, acoes: {}, equipe: {}, log: {}, patrocinios: {}, planos: {} }, ver: -1, ls: [], timer: null };
 const gsDisponivel = () => PLATAFORMA === "google" && typeof google !== "undefined" && google.script && google.script.run;
 function gsCall(fn, ...args) { return gsCallT(30000, fn, ...args); }
 const ERRO_REDE = /NetworkError|Failed to fetch|network|HTTP 0|Load failed|demorou/i;
@@ -2716,7 +2794,7 @@ async function gsLoad() {
   GSS.ver = d.versao;
   GSS.url = d.urlApp || "";
   GSS.data = { radar: d.radar || {}, plantel: d.plantel || {}, sigilo: d.sigilo || {}, config: d.config || {},
-    jogos: d.jogos || {}, caixa: d.caixa || {}, acoes: d.acoes || {}, equipe: d.equipe || {}, log: d.log || {}, patrocinios: d.patrocinios || {} };
+    jogos: d.jogos || {}, caixa: d.caixa || {}, acoes: d.acoes || {}, equipe: d.equipe || {}, log: d.log || {}, patrocinios: d.patrocinios || {}, planos: d.planos || {} };
   FILA.itens.forEach(aplicarItemLocal);
   gsEmit();
 }
@@ -3920,6 +3998,258 @@ function fecharRelatorio() {
 }
 
 /* =========================================================
+   PLANO DE JOGO: campo com formação, jogadores do Plantel e do Radar
+   Monta e analisa escalações. Só salva quando a diretoria toca em "Salvar".
+   ========================================================= */
+// x: 0 (esquerda) a 100 (direita) · y: 0 (ataque, em cima) a 100 (nosso gol, embaixo)
+const DEF4 = [["Lateral direito", 86, 70], ["Zagueiro", 62, 77], ["Zagueiro", 38, 77], ["Lateral esquerdo", 14, 70]];
+const FORMACOES = {
+  "4-4-2": [...DEF4, ["Meia", 84, 46], ["Volante", 60, 53], ["Volante", 40, 53], ["Meia", 16, 46], ["Centroavante", 62, 20], ["Centroavante", 38, 20]],
+  "4-3-3": [...DEF4, ["Volante", 50, 56], ["Meia", 70, 44], ["Meia", 30, 44], ["Ponta direita", 82, 22], ["Centroavante", 50, 17], ["Ponta esquerda", 18, 22]],
+  "4-2-3-1": [...DEF4, ["Volante", 62, 57], ["Volante", 38, 57], ["Ponta direita", 82, 36], ["Meia-atacante", 50, 38], ["Ponta esquerda", 18, 36], ["Centroavante", 50, 16]],
+  "4-1-4-1": [...DEF4, ["Volante", 50, 59], ["Ponta direita", 84, 40], ["Meia", 62, 44], ["Meia", 38, 44], ["Ponta esquerda", 16, 40], ["Centroavante", 50, 18]],
+  "3-5-2": [["Zagueiro", 72, 76], ["Zagueiro", 50, 79], ["Zagueiro", 28, 76], ["Lateral direito", 88, 50], ["Volante", 63, 57], ["Volante", 37, 57], ["Lateral esquerdo", 12, 50], ["Meia-atacante", 50, 39], ["Centroavante", 62, 18], ["Centroavante", 38, 18]],
+  "5-3-2": [["Lateral direito", 88, 66], ["Zagueiro", 70, 77], ["Zagueiro", 50, 79], ["Zagueiro", 30, 77], ["Lateral esquerdo", 12, 66], ["Volante", 50, 55], ["Meia", 72, 45], ["Meia", 28, 45], ["Centroavante", 62, 20], ["Centroavante", 38, 20]],
+};
+const MAX_BANCO = 12;
+const slotsDe = f => [{ pos: "Goleiro", x: 50, y: 92 }, ...(FORMACOES[f] || FORMACOES["4-4-2"]).map(([pos, x, y]) => ({ pos, x, y }))];
+const planoVazio = (f = "4-4-2") => ({ id: null, nome: "", formacao: f, titulares: slotsDe(f).map(s => ({ ...s, ref: "" })), banco: [] });
+// Quem é o jogador de uma referência "plantel:id" ou "radar:id" (quem foi contratado do radar é achado no plantel)
+function jogadorRef(ref) {
+  if (!ref) return null;
+  const [col, id] = ref.split(":");
+  if (col === "plantel") { const p = find("plantel", id); return p ? { p, col } : null; }
+  const r = find("radar", id); if (r) return { p: r, col: "radar" };
+  const c = state.plantel.find(x => x.deRadar === id); return c ? { p: c, col: "plantel" } : null;
+}
+const casaPos = (p, pos) => !!p && (p.posicao === pos || p.posicao2 === pos || ((p.posicao === "Ponta" || p.posicao2 === "Ponta") && /^Ponta /.test(pos)));
+const planoAtual = () => state.plano || (state.plano = planoVazio());
+function marcarSujo() { state.planoSujo = true; renderPlano(); }
+function trocarFormacao(f) {
+  const pl = planoAtual(), velhos = pl.titulares.filter(t => t.ref).map(t => ({ ...t }));
+  const novos = slotsDe(f).map(s => ({ ...s, ref: "" }));
+  novos.forEach(s => { const i = velhos.findIndex(v => v.pos === s.pos); if (i >= 0) { s.ref = velhos[i].ref; velhos.splice(i, 1); } });
+  novos.forEach(s => { if (!s.ref && velhos.length) s.ref = velhos.shift().ref; });
+  velhos.forEach(v => { if (pl.banco.length < MAX_BANCO && !pl.banco.includes(v.ref)) pl.banco.push(v.ref); });
+  pl.formacao = f; pl.titulares = novos; marcarSujo();
+}
+function analisePlano(pl = planoAtual()) {
+  const tit = pl.titulares.map(t => ({ t, j: jogadorRef(t.ref) })).filter(x => x.j);
+  const ban = pl.banco.map(jogadorRef).filter(Boolean);
+  const todos = [...tit.map(x => x.j), ...ban];
+  const doPlantel = todos.filter(j => j.col === "plantel"), doRadar = todos.filter(j => j.col === "radar");
+  const soma = l => l.reduce((s, j) => s + custoJogo(j.p), 0);
+  const conta = o => state.plantel.filter(p => (p.origem || "sertaozinho") === o).length + doRadar.filter(j => j.p.origem === o).length;
+  const foraPos = tit.filter(x => !casaPos(x.j.p, x.t.pos)).map(x => ({ nome: x.j.p.nome, dele: x.j.p.posicao || "posição ?", aqui: x.t.pos }));
+  const elencoComRadar = state.plantel.reduce((s, p) => s + custoJogo(p), 0) + soma(doRadar);
+  return { tit, ban, doPlantel, doRadar, custoTit: soma(tit.map(x => x.j)), custoBanco: soma(ban), custoPlantel: soma(doPlantel), custoRadar: soma(doRadar),
+    luvasRadar: doRadar.reduce((s, j) => s + num(j.p.assinatura), 0), sz: conta("sertaozinho"), fo: conta("fora"), semOrigem: doRadar.filter(j => !["sertaozinho", "fora"].includes(j.p.origem)).length,
+    foraPos, elencoComRadar, vazias: pl.titulares.filter(t => !jogadorRef(t.ref)).length };
+}
+function renderPlano() {
+  const pl = planoAtual(), a = analisePlano(pl);
+  const salvos = [...state.planos].sort((x, y) => String(x.nome).localeCompare(y.nome, "pt-BR"));
+  $("#plano-barra").innerHTML = `
+    <div class="f" style="min-width:200px;flex:1"><label for="pj-salvos">Planos salvos</label><select class="select" id="pj-salvos" data-act="plano-abrir"><option value="">${pl.id ? "— novo plano —" : "Plano novo (ainda não salvo)"}</option>${salvos.map(s => `<option value="${esc(s.id)}" ${s.id === pl.id ? "selected" : ""}>${esc(s.nome)} · ${esc(s.formacao)}</option>`).join("")}</select></div>
+    <div class="f"><label for="pj-form">Formação</label><select class="select" id="pj-form" data-act="plano-formacao">${Object.keys(FORMACOES).map(f => `<option ${f === pl.formacao ? "selected" : ""}>${f}</option>`).join("")}</select></div>
+    <div class="pj-acoes"><button class="btn" data-act="plano-novo">＋ Novo</button><button class="btn primary edit-only" data-act="plano-salvar" ${state.planoSujo || !pl.id ? "" : "disabled"}>💾 Salvar${state.planoSujo ? " *" : ""}</button>
+      <button class="btn edit-only" data-act="plano-salvar-como" ${pl.id ? "" : "hidden"}>Salvar como novo</button><button class="btn" data-act="plano-imagem">📷 Imagem</button>
+      ${pl.id ? `<button class="btn ghost edit-only" data-act="plano-excluir" title="Excluir este plano">🗑</button>` : ""}</div>
+    <p class="hint pj-status">${pl.id ? `<b>${esc(pl.nome)}</b>${state.planoSujo ? " · <span style=\"color:var(--warn)\">alterações ainda não salvas</span>" : " · salvo"}` : state.planoSujo ? `<span style="color:var(--warn)">Plano novo, ainda não salvo. Toque em <b>💾 Salvar</b> para guardar.</span>` : "Monte a escalação: toque numa posição para escolher o jogador."}</p>`;
+  const el = pl.titulares.map((t, i) => {
+    const j = jogadorRef(t.ref), fora = j && !casaPos(j.p, t.pos);
+    return `<button class="jog ${j ? j.col : "vazio"}" data-slot="${i}" style="left:${t.x}%;top:${t.y}%" title="${esc(t.pos)}${j ? ` · ${esc(j.p.nome)}` : ""}">
+      <span class="bola">${j ? esc(initials(j.p.nome)) : esc(POS_SIGLA[t.pos] || "?")}</span>${fora ? `<span class="alerta" title="Fora de posição">!</span>` : ""}
+      <span class="nome">${j ? esc(firstLast(j.p.nome)) : `+ ${esc(POS_SIGLA[t.pos] || "")}`}</span></button>`;
+  }).join("");
+  $("#plano-campo").innerHTML = `<div class="l-borda"></div><div class="l-meio"></div><div class="l-circ"></div><div class="l-area t"></div><div class="l-area b"></div><div class="l-peq t"></div><div class="l-peq b"></div>${el}`;
+  $("#plano-banco").innerHTML = `<div class="pj-h"><h3>🪑 Banco de reservas <span class="tag neutral">${pl.banco.length}/${MAX_BANCO}</span></h3>${pl.banco.length < MAX_BANCO ? `<button class="btn sm" data-act="plano-banco-add">＋ Reserva</button>` : ""}</div>
+    ${pl.banco.length ? `<div class="pj-banco">${pl.banco.map((r, i) => { const j = jogadorRef(r); return `<span class="pj-chip ${j ? j.col : ""}"><span>${j ? esc(firstLast(j.p.nome)) : "jogador não encontrado"}<small>${j ? esc(POS_SIGLA[j.p.posicao] || "") + (j.col === "radar" ? " · radar" : "") : ""}</small></span><button data-act="plano-banco-rem" data-i="${i}" aria-label="Tirar do banco">✕</button></span>`; }).join("")}</div>` : `<p class="hint">Nenhum reserva ainda.</p>`}`;
+  const vagasSz = a.sz > VAGAS.sertaozinho, vagasFo = a.fo > VAGAS.fora;
+  $("#plano-analise").innerHTML = `
+    <div class="pj-h"><h3>📊 Análise</h3></div>
+    <div class="pj-kpis">
+      <div><span>Custo por jogo · titulares</span><b>${money(a.custoTit)}</b><small>banco: ${money(a.custoBanco)}</small></div>
+      <div><span>Já do plantel</span><b>${money(a.custoPlantel)}</b><small>${a.doPlantel.length} jogador${a.doPlantel.length === 1 ? "" : "es"}</small></div>
+      <div class="${a.doRadar.length ? "rad" : ""}"><span>A mais, se contratar o radar</span><b>${money(a.custoRadar)}</b><small>${a.doRadar.length} do radar${a.luvasRadar ? ` · luvas ${money(a.luvasRadar)}` : ""}</small></div>
+      <div class="${a.elencoComRadar > state.config.tetoMax ? "neg" : ""}"><span>Elenco todo, contratando o radar</span><b>${money(a.elencoComRadar)}</b><small>teto ${money(state.config.tetoMin)} a ${money(state.config.tetoMax)} por jogo</small></div>
+    </div>
+    <div class="pj-linha ${vagasSz || vagasFo ? "ruim" : "boa"}"><b>Vagas</b> (contratando os do radar): Sertãozinho <b>${a.sz}/${VAGAS.sertaozinho}</b> · De fora <b>${a.fo}/${VAGAS.fora}</b>${vagasSz || vagasFo ? ` · ⚠️ passa ${vagasSz ? `${a.sz - VAGAS.sertaozinho} de Sertãozinho` : ""}${vagasSz && vagasFo ? " e " : ""}${vagasFo ? `${a.fo - VAGAS.fora} de fora` : ""}` : " · ✓ cabe"}${a.semOrigem ? ` · ${a.semOrigem} do radar sem origem definida` : ""}</div>
+    <div class="pj-linha ${a.foraPos.length ? "ruim" : "boa"}"><b>Fora de posição:</b> ${a.foraPos.length ? a.foraPos.map(f => `${esc(firstLast(f.nome))} (${esc(f.dele)}) jogando de ${esc(f.aqui)}`).join(" · ") : "ninguém ✓"}</div>
+    ${a.vazias ? `<div class="pj-linha"><b>Posições vazias:</b> ${a.vazias}</div>` : ""}
+    <p class="hint" style="margin-top:8px"><span class="pj-leg plantel"></span> Plantel &nbsp; <span class="pj-leg radar"></span> Radar (ainda não contratado) &nbsp; <b style="color:var(--bad)">!</b> fora de posição. Arraste um jogador para mudar o lugar dele no campo; solte em cima de outro para trocar os dois.</p>`;
+  $("#cnt-plano").textContent = state.planos.length;
+}
+// Escolher o jogador de uma posição (ou do banco)
+function openEscolha(alvo) {
+  const pl = planoAtual(), pos = alvo.slot != null ? pl.titulares[alvo.slot].pos : "";
+  const usados = new Set([...pl.titulares.map(t => t.ref), ...pl.banco].filter(Boolean));
+  const atual = alvo.slot != null ? pl.titulares[alvo.slot].ref : "";
+  const lista = [...state.plantel.map(p => ({ ref: "plantel:" + p.id, p, col: "plantel" })),
+    ...state.radar.filter(r => r.status !== "recusou").map(p => ({ ref: "radar:" + p.id, p, col: "radar" }))];
+  const ordem = x => (pos && casaPos(x.p, pos) ? 0 : 1) * 10 + (x.col === "plantel" ? 0 : 1);
+  lista.sort((a, b) => ordem(a) - ordem(b) || String(a.p.nome).localeCompare(b.p.nome, "pt-BR"));
+  const item = x => { const id = idade(x.p.nascimento);
+    return `<button class="pj-op ${x.col} ${x.ref === atual ? "on" : ""}" data-act="plano-escolher" data-ref="${esc(x.ref)}">
+      <span class="sig">${esc(POS_SIGLA[x.p.posicao] || "?")}</span>
+      <span class="tx"><b>${esc(x.p.nome)}</b><small>${esc(x.p.posicao || "posição ?")}${x.p.posicao2 ? ` / ${esc(x.p.posicao2)}` : ""}${x.p.pe ? ` · pé ${esc(x.p.pe.toLowerCase())}` : ""}${id != null ? ` · ${id} anos` : ""} · ${esc(ORIGEM_LABEL[x.p.origem] || "Origem ?")}</small></span>
+      <span class="dir"><span class="tag ${x.col === "plantel" ? "sz" : "warn"}">${x.col === "plantel" ? "Plantel" : "Radar"}</span><small>${money(custoJogo(x.p))}/jogo</small>${usados.has(x.ref) && x.ref !== atual ? `<small class="usado">já escalado · troca</small>` : ""}</span></button>`; };
+  const casa = lista.filter(x => pos && casaPos(x.p, pos)), resto = lista.filter(x => !(pos && casaPos(x.p, pos)));
+  openModal(`<div class="modal" id="pj-escolha">
+    <div class="modal-head"><div><h3>${alvo.slot != null ? `Quem joga de ${esc(pos)}?` : "Adicionar reserva"}</h3><p>Jogadores do Plantel e do Radar</p></div><button type="button" class="x" data-act="close" aria-label="Fechar">✕</button></div>
+    <div class="modal-body"><input class="input" id="pj-busca" placeholder="Procurar jogador…" autocomplete="off" style="margin-bottom:10px">
+      <div id="pj-lista">${casa.length ? `<div class="pj-sec">Jogam de ${esc(pos)}</div>${casa.map(item).join("")}<div class="pj-sec">Outros jogadores</div>` : ""}${resto.map(item).join("") || `<p class="hint">Nenhum jogador no Plantel ou no Radar.</p>`}</div></div>
+    <div class="modal-foot">${alvo.slot != null && atual ? `<button class="btn" data-act="plano-tirar">Deixar posição vazia</button><button class="btn" data-act="plano-pro-banco">Mandar para o banco</button>` : ""}<span class="spacer"></span><button class="btn" data-act="close">Cancelar</button></div></div>`);
+  state.planoAlvo = alvo;
+  $("#pj-busca").addEventListener("input", e => {
+    const q = e.target.value.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+    document.querySelectorAll("#pj-lista .pj-op").forEach(b => { b.classList.toggle("hidden", !!q && !b.textContent.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().includes(q)); });
+  });
+}
+function escolherJogador(ref) {
+  const pl = planoAtual(), alvo = state.planoAlvo || {};
+  if (alvo.slot != null) {
+    const ant = pl.titulares[alvo.slot].ref;
+    const outro = pl.titulares.findIndex((t, i) => i !== alvo.slot && t.ref === ref);
+    if (outro >= 0) pl.titulares[outro].ref = ant;                       // estava em outra posição: troca
+    const b = pl.banco.indexOf(ref);
+    if (b >= 0) { if (ant) pl.banco[b] = ant; else pl.banco.splice(b, 1); }  // estava no banco: troca com quem saiu
+    pl.titulares[alvo.slot].ref = ref;
+  } else {
+    if (pl.banco.includes(ref)) { closeModal(); return; }
+    const t = pl.titulares.find(x => x.ref === ref); if (t) t.ref = "";
+    if (pl.banco.length < MAX_BANCO) pl.banco.push(ref);
+  }
+  closeModal(); marcarSujo();
+}
+async function salvarPlano(comoNovo) {
+  const pl = planoAtual();
+  let nome = pl.nome;
+  if (!pl.id || comoNovo) {
+    nome = await pedirNomePlano(comoNovo ? `${pl.nome} (cópia)` : `${pl.formacao} · ${new Date().toLocaleDateString("pt-BR")}`);
+    if (!nome) return;
+  }
+  const id = comoNovo || !pl.id ? newId("planos") : pl.id, now = new Date().toISOString();
+  const antigo = pl.id && !comoNovo ? find("planos", pl.id) : null;
+  const doc = { nome, formacao: pl.formacao, titulares: pl.titulares.map(t => ({ pos: t.pos, x: Math.round(t.x * 10) / 10, y: Math.round(t.y * 10) / 10, ref: t.ref || "" })), banco: [...pl.banco],
+    criadoEm: (antigo && antigo.criadoEm) || now, atualizadoEm: now };
+  if (await saveDoc("planos", id, doc)) {
+    state.plano = { ...JSON.parse(JSON.stringify(doc)), id }; state.planoSujo = false;
+    toast("Plano salvo", "good"); registrar(`${antigo ? "salvou" : "criou"} o plano de jogo "${nome}" (${doc.formacao})`); renderPlano();
+  }
+}
+function pedirNomePlano(sugestao) {
+  return new Promise(res => {
+    openModal(`<form class="modal small" id="pj-nome-form" novalidate><div class="modal-head"><div><h3>Nome do plano</h3><p>Para achar depois na lista de planos salvos</p></div><button type="button" class="x" data-act="close" aria-label="Fechar">✕</button></div>
+      <div class="modal-body"><input class="input" id="pj-nome" maxlength="60" value="${esc(sugestao)}" placeholder="Ex.: 4-4-2 com reforços"></div>
+      <div class="modal-foot"><span class="spacer"></span><button type="button" class="btn" data-act="close">Cancelar</button><button class="btn primary" id="save-btn">Salvar</button></div></form>`);
+    const f = $("#pj-nome-form"); setTimeout(() => { $("#pj-nome").focus(); $("#pj-nome").select(); }, 30);
+    let feito = false;
+    f.addEventListener("submit", e => { e.preventDefault(); const v = $("#pj-nome").value.trim(); if (!v) { toast("Dê um nome ao plano", "bad"); return; } feito = true; closeModal(); res(v); });
+    const obs = new MutationObserver(() => { if (!document.getElementById("pj-nome-form")) { obs.disconnect(); if (!feito) res(""); } });
+    obs.observe($("#modal-root"), { childList: true });
+  });
+}
+async function sairDoPlanoSeguro() {
+  if (!state.planoSujo) return true;
+  return confirmBox({ title: "Alterações não salvas", text: `<p style="margin:0">O plano atual tem alterações que <b>não foram salvas</b>. Se continuar, elas serão perdidas.</p>`, ok: "Continuar sem salvar" });
+}
+// Arrastar jogadores no campo (dedo ou mouse). Soltar em cima de outro jogador troca os dois.
+function ligarArraste() {
+  const campo = $("#plano-campo");
+  let ar = null;
+  campo.addEventListener("pointerdown", e => {
+    const b = e.target.closest(".jog"); if (!b) return;
+    ar = { b, i: +b.dataset.slot, x0: e.clientX, y0: e.clientY, moveu: false };
+    b.setPointerCapture(e.pointerId);
+  });
+  campo.addEventListener("pointermove", e => {
+    if (!ar) return;
+    if (!ar.moveu && Math.hypot(e.clientX - ar.x0, e.clientY - ar.y0) < 8) return;
+    ar.moveu = true; ar.b.classList.add("arrastando");
+    const r = campo.getBoundingClientRect();
+    ar.x = Math.max(4, Math.min(96, (e.clientX - r.left) / r.width * 100));
+    ar.y = Math.max(4, Math.min(96, (e.clientY - r.top) / r.height * 100));
+    ar.b.style.left = ar.x + "%"; ar.b.style.top = ar.y + "%";
+  });
+  const fim = e => {
+    if (!ar) return;
+    const { i, moveu, x, y } = ar; ar.b.classList.remove("arrastando"); ar = null;
+    if (!moveu) { openEscolha({ slot: i }); return; }
+    const pl = planoAtual();
+    const alvo = pl.titulares.findIndex((t, k) => k !== i && Math.hypot(t.x - x, (t.y - y) * 1.47) < 7);
+    if (alvo >= 0) { const tmp = pl.titulares[alvo].ref; pl.titulares[alvo].ref = pl.titulares[i].ref; pl.titulares[i].ref = tmp; }
+    else { pl.titulares[i].x = x; pl.titulares[i].y = y; }
+    marcarSujo();
+  };
+  campo.addEventListener("pointerup", fim);
+  campo.addEventListener("pointercancel", () => { if (ar) { ar.b.classList.remove("arrastando"); ar = null; renderPlano(); } });
+}
+// Imagem do campo para o WhatsApp (sem valores)
+function imagemPlano() {
+  const pl = planoAtual(), W = 720, H = 1060, cv = document.createElement("canvas");
+  cv.width = W; cv.height = H; const g = cv.getContext("2d");
+  g.fillStyle = "#131C47"; g.fillRect(0, 0, W, H);
+  g.fillStyle = "#fff"; g.font = "bold 30px Arial"; g.textAlign = "center";
+  g.fillText("AMDC FC · " + (pl.nome || "Plano de jogo"), W / 2, 46);
+  g.font = "20px Arial"; g.fillStyle = "#C9D1F2"; g.fillText("Formação " + pl.formacao, W / 2, 76);
+  const fx = 30, fy = 96, fw = W - 60, fh = 820;
+  for (let i = 0; i < 10; i++) { g.fillStyle = i % 2 ? "#2A7F44" : "#2E8B4A"; g.fillRect(fx, fy + i * fh / 10, fw, fh / 10 + 1); }
+  g.strokeStyle = "rgba(255,255,255,.8)"; g.lineWidth = 3;
+  const m = 18; g.strokeRect(fx + m, fy + m, fw - 2 * m, fh - 2 * m);
+  g.beginPath(); g.moveTo(fx + m, fy + fh / 2); g.lineTo(fx + fw - m, fy + fh / 2); g.stroke();
+  g.beginPath(); g.arc(fx + fw / 2, fy + fh / 2, fw * 0.13, 0, Math.PI * 2); g.stroke();
+  [[fy + m, 1], [fy + fh - m, -1]].forEach(([y0, s]) => { g.strokeRect(fx + fw * 0.22, s > 0 ? y0 : y0 - fh * 0.15, fw * 0.56, fh * 0.15); g.strokeRect(fx + fw * 0.36, s > 0 ? y0 : y0 - fh * 0.06, fw * 0.28, fh * 0.06); });
+  pl.titulares.forEach(t => {
+    const j = jogadorRef(t.ref), cx = fx + t.x / 100 * fw, cy = fy + t.y / 100 * fh;
+    g.beginPath(); g.arc(cx, cy, 26, 0, Math.PI * 2);
+    g.fillStyle = j ? (j.col === "radar" ? "#FFF7E3" : "#fff") : "rgba(255,255,255,.15)"; g.fill();
+    g.lineWidth = 4; g.strokeStyle = j ? (j.col === "radar" ? "#E0A92E" : "#131C47") : "#fff"; g.stroke();
+    g.fillStyle = j ? "#131C47" : "#fff"; g.font = "bold 17px Arial"; g.textBaseline = "middle";
+    g.fillText(j ? initials(j.p.nome) : (POS_SIGLA[t.pos] || ""), cx, cy + 1);
+    if (j) { const nm = firstLast(j.p.nome); g.font = "bold 17px Arial"; const w = g.measureText(nm).width + 14;
+      g.fillStyle = "rgba(19,28,71,.85)"; g.fillRect(cx - w / 2, cy + 32, w, 24); g.fillStyle = "#fff"; g.fillText(nm, cx, cy + 45); }
+    g.textBaseline = "alphabetic";
+  });
+  const banco = pl.banco.map(jogadorRef).filter(Boolean).map(j => firstLast(j.p.nome));
+  g.fillStyle = "#fff"; g.font = "bold 20px Arial"; g.textAlign = "left";
+  g.fillText("Banco:", 30, 950);
+  g.font = "18px Arial"; g.fillStyle = "#DDE3FA";
+  const linhas = []; let lin = ""; banco.forEach(n => { const nx = lin ? lin + " · " + n : n; if (g.measureText(nx).width > 580) { linhas.push(lin); lin = n; } else lin = nx; }); if (lin) linhas.push(lin);
+  (linhas.length ? linhas : ["—"]).slice(0, 3).forEach((l, i) => g.fillText(l, 110, 950 + i * 26));
+  g.textAlign = "center"; g.font = "15px Arial"; g.fillStyle = "#9AA6D6";
+  g.fillText("Branco: plantel · Amarelo: radar (ainda não contratado)", W / 2, H - 18);
+  return cv.toDataURL("image/png");
+}
+async function abrirImagemPlano() {
+  const url = imagemPlano();
+  openModal(`<div class="modal" id="pj-img"><div class="modal-head"><div><h3>Imagem do plano</h3><p>Sem valores: pode mandar no grupo da diretoria ou da comissão</p></div><button type="button" class="x" data-act="close" aria-label="Fechar">✕</button></div>
+    <div class="modal-body" style="text-align:center"><img src="${url}" alt="Escalação" style="max-width:100%;max-height:60vh;border-radius:10px"><p class="hint">No celular, você também pode tocar e segurar na imagem para salvar ou compartilhar.</p></div>
+    <div class="modal-foot"><span class="spacer"></span><a class="btn" href="${url}" download="plano-amdc.png" data-act="link">⬇ Baixar</a><button class="btn primary" data-act="plano-compartilhar">Compartilhar</button></div></div>`);
+  state.planoImg = url;
+}
+async function compartilharImagemPlano() {
+  try {
+    const blob = await (await fetch(state.planoImg)).blob();
+    const file = new File([blob], "plano-amdc.png", { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: "Plano de jogo AMDC" }); return; }
+  } catch (e) { if (e && e.name === "AbortError") return; }
+  toast("Este aparelho não compartilha direto daqui. Use ⬇ Baixar e envie pelo WhatsApp.", "bad");
+}
+function resumoAbaPlano(o) {
+  const pl = planoAtual(), a = analisePlano(pl);
+  const blocos = [cabecalhoResumo("Plano de jogo")];
+  blocos.push([`*${(pl.nome || "Plano sem nome").toUpperCase()} · ${pl.formacao}*`, ...pl.titulares.map(t => { const j = jogadorRef(t.ref);
+    return `• ${POS_SIGLA[t.pos] || t.pos}: ${j ? firstLast(j.p.nome) + (j.col === "radar" ? " (radar)" : "") : "—"}`; })]);
+  const ban = pl.banco.map(jogadorRef).filter(Boolean);
+  if (ban.length) blocos.push(["*BANCO*", `• ${ban.map(j => firstLast(j.p.nome) + (j.col === "radar" ? " (radar)" : "")).join(", ")}`]);
+  if (a.foraPos.length) blocos.push(["*FORA DE POSIÇÃO*", ...a.foraPos.map(f => `• ${firstLast(f.nome)} (${f.dele}) de ${f.aqui}`)]);
+  if (o.fin) blocos.push(["*CUSTO POR JOGO*", `• Titulares: ${money(a.custoTit)} · banco: ${money(a.custoBanco)}`, `• A mais, contratando o radar: ${money(a.custoRadar)}${a.luvasRadar ? ` (+ luvas ${money(a.luvasRadar)})` : ""}`,
+    `• Vagas contratando o radar: Sertãozinho ${a.sz}/${VAGAS.sertaozinho} · De fora ${a.fo}/${VAGAS.fora}`]);
+  return juntarBlocos(blocos);
+}
+
+/* =========================================================
    FINANCEIRO: visão geral, planejamento do elenco, orçamento e caixa
    ========================================================= */
 const FIN_SECS = [
@@ -4478,7 +4808,7 @@ async function submitPlayer(form) {
   if (anterior) { const { id: _x, ...rest } = anterior; Object.keys(rest).forEach(k => { if (!(k in data)) data[k] = rest[k]; }); }
   data.criadoEm = form.dataset.criado || (anterior && anterior.criadoEm) || now;
   data.atualizadoEm = now;
-  if (fromRadar) data.contratadoEm = now;
+  if (fromRadar) { data.contratadoEm = now; data.deRadar = fromRadar; }
 
   const btn = $("#save-btn"); const label = btn.textContent; btn.disabled = true; btn.textContent = "Salvando…";
   const docId = id || newId(kind);
@@ -4548,6 +4878,7 @@ document.addEventListener("click", async e => {
   if (!el) return;
   const act = el.dataset.act, id = el.dataset.id;
   if (act === "prazo-set") return;
+  if (act === "plano-abrir" || act === "plano-formacao") return;
   if (act === "link" || act === "status-quick" || act === "prio-quick" || act === "cmp-add" || act === "pres-toggle" || act === "extra-set" || act === "sim-toggle" || act === "orc-set") return;
   if (act === "cmp-toggle" || act === "cmp-remove") {
     toggleCompare(el.dataset.col, id);
@@ -4571,6 +4902,22 @@ document.addEventListener("click", async e => {
   }
   if (act === "summary") return openSummary();
   if (act === "relatorio") return abrirRelatorio();
+  if (act === "plano-escolher") return escolherJogador(el.dataset.ref);
+  if (act === "plano-tirar") { const pl = planoAtual(), a = state.planoAlvo; if (a && a.slot != null) pl.titulares[a.slot].ref = ""; closeModal(); return marcarSujo(); }
+  if (act === "plano-pro-banco") { const pl = planoAtual(), a = state.planoAlvo; if (a && a.slot != null) { const r = pl.titulares[a.slot].ref; pl.titulares[a.slot].ref = ""; if (r && pl.banco.length < MAX_BANCO) pl.banco.push(r); } closeModal(); return marcarSujo(); }
+  if (act === "plano-banco-add") return openEscolha({ banco: true });
+  if (act === "plano-banco-rem") { planoAtual().banco.splice(+el.dataset.i, 1); return marcarSujo(); }
+  if (act === "plano-novo") { if (await sairDoPlanoSeguro()) { state.plano = planoVazio(planoAtual().formacao); state.planoSujo = false; renderPlano(); } return; }
+  if (act === "plano-salvar") return salvarPlano(false);
+  if (act === "plano-salvar-como") return salvarPlano(true);
+  if (act === "plano-imagem") return abrirImagemPlano();
+  if (act === "plano-compartilhar") return compartilharImagemPlano();
+  if (act === "plano-excluir") {
+    const pl = planoAtual(); if (!pl.id) return;
+    if (await confirmBox({ title: "Excluir plano", text: `<p style="margin:0">Excluir o plano <b>${esc(pl.nome)}</b>? Os jogadores não são afetados.</p>`, ok: "Excluir" }))
+      if (await deleteDoc("planos", pl.id)) { toast("Plano excluído"); registrar(`excluiu o plano de jogo "${pl.nome}"`); state.plano = planoVazio(pl.formacao); state.planoSujo = false; renderPlano(); }
+    return;
+  }
   if (act === "instalar") {
     if (state.instalar) { state.instalar.prompt(); state.instalar = null; $("#btn-instalar").classList.add("hidden"); }
     else openHelp("app");
@@ -4816,6 +5163,16 @@ document.addEventListener("change", async e => {
   }
   const oc = e.target.closest('[data-act="orc-set"]');
   if (oc) { if (state.readOnly) return; return setPrevisto(oc.dataset.cat, Math.max(0, num(oc.value))); }
+  const pa = e.target.closest('[data-act="plano-abrir"]');
+  if (pa) {
+    const id = pa.value;
+    if (!await sairDoPlanoSeguro()) { renderPlano(); return; }
+    const d = id ? find("planos", id) : null;
+    state.plano = d ? { ...JSON.parse(JSON.stringify(d)), id: d.id } : planoVazio(planoAtual().formacao);
+    state.planoSujo = false; renderPlano(); return;
+  }
+  const pf = e.target.closest('[data-act="plano-formacao"]');
+  if (pf) return trocarFormacao(pf.value);
   const pz = e.target.closest('[data-act="prazo-set"]');
   if (pz) {
     if (state.readOnly) return;
@@ -4867,6 +5224,7 @@ function fromHash() {
 window.addEventListener("hashchange", () => { const t = fromHash(); if (t !== state.tab) { state.tab = t; renderAll(); } });
 
 state.tab = fromHash();
+ligarArraste();
 renderAll();
 connect();
 </script>
