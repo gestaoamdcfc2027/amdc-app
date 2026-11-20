@@ -223,6 +223,51 @@ body.com-relatorio{overflow:hidden}
 .pj-op .dir{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex:none}.pj-op .dir small{font-size:12px;color:var(--muted)}
 .pj-op .usado{color:var(--warn) !important;font-weight:700}
 @media (max-width:640px){.jog .bola{width:36px;height:36px;font-size:12px}.jog .nome{font-size:10.5px;padding:1px 5px}.pj-kpis b{font-size:18px}}
+/* confirmação de presença no plano ligado a um jogo */
+.jog .cfm{position:absolute;top:-4px;right:calc(50% + 12px);width:18px;height:18px;border-radius:50%;color:#fff;font-size:11px;font-weight:800;display:grid;place-items:center;border:2px solid #fff}
+.jog .cfm.vou{background:var(--good)}.jog .cfm.nao{background:var(--bad)}.jog .cfm.sem{background:#7A849E}
+.jog.cf-nao .bola{opacity:.55}
+.pj-op.cf-nao .tx b{text-decoration:line-through;color:var(--muted)}
+.pj-op .cft{font-size:11.5px;font-weight:700;white-space:nowrap}.pj-op .cft.vou{color:var(--good)}.pj-op .cft.nao{color:var(--bad)}.pj-op .cft.sem{color:var(--muted)}
+/* comparar dois planos */
+.pj-cmp-sel{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pj-cmp-sel .f{margin:0}
+.pj-cmp-campos{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+.pj-cmp-campos h4{margin:0 0 6px;font-size:15px}
+.campo.mini{max-width:340px;margin:0 auto}
+.campo.mini .jog{cursor:default;pointer-events:none;width:26%}
+.campo.mini .jog .bola{width:30px;height:30px;font-size:10.5px;border-width:2px}
+.campo.mini .jog .nome{font-size:10px;padding:0 4px}
+.campo>div.jog{border:0}
+.campo.duplo{max-width:460px;margin:6px auto;aspect-ratio:68/128}
+.campo.duplo .jog{cursor:default;pointer-events:none;width:22%}
+.campo.duplo .jog .bola{width:32px;height:32px;font-size:11px;border-width:2px}
+.campo.duplo .jog .nome{font-size:10px;padding:0 4px}
+.jog.time-a .bola{background:var(--royal);color:#fff;border:2px solid #fff}
+.jog.time-b .bola{background:#fff;color:var(--navy);border:2px solid var(--navy)}
+.jog.time-a.radar .bola,.jog.time-b.radar .bola{border:3px dashed #FFD54A}
+.jog.time-a.vazio .bola{background:rgba(39,71,201,.35);border:2px dashed #fff;color:#fff}
+.jog.time-b.vazio .bola{background:rgba(255,255,255,.35);border:2px dashed #fff;color:var(--navy)}
+.jog.time-a .nome{background:var(--royal)}.jog.time-b .nome{background:#fff;color:var(--navy)}
+.pj-cmp-duplo{display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:10px}
+.pj-time{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:14px;margin-bottom:6px}
+.pj-cor{width:16px;height:16px;border-radius:50%;flex:none}
+.pj-time.a .pj-cor{background:var(--royal);border:2px solid #fff;box-shadow:0 0 0 1px var(--royal)}.pj-time.b .pj-cor{background:#fff;border:2px solid var(--navy)}
+.pj-cmp-modo{display:inline-flex;margin-top:12px;border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
+.pj-cmp-modo button{border:0;background:#fff;padding:7px 14px;font-weight:700;font-size:13.5px;cursor:pointer;color:var(--muted)}
+.pj-cmp-modo button.on{background:var(--navy);color:#fff}
+.pj-dif{display:grid;gap:6px;margin-top:12px}
+.pj-dif div{padding:8px 10px;border-radius:10px;background:var(--ice);font-size:13.5px}
+.pj-dif .sai{background:var(--bad-soft,#FDECEA)}.pj-dif .ent{background:var(--good-soft)}
+.pj-cmp-tab{width:100%;border-collapse:collapse;margin-top:12px;font-size:13.5px}
+.pj-cmp-tab th,.pj-cmp-tab td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.pj-cmp-tab td.num,.pj-cmp-tab th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pj-cmp-tab thead th{font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+@media (max-width:640px){.pj-cmp-sel,.pj-cmp-campos{grid-template-columns:1fr}.campo.mini{max-width:300px}}
+/* convocação no jogo */
+.conv-campos{display:grid;grid-template-columns:160px 1fr;gap:10px;margin-bottom:6px}
+.conv-campos .f{margin:0}
+@media (max-width:640px){.conv-campos{grid-template-columns:1fr}}
 .prazos{display:grid;gap:4px}
 .prazo-row{display:grid;grid-template-columns:1fr 170px 240px;gap:12px;align-items:center;padding:8px 0;border-top:1px solid #EEF1F6}
 .prazo-row .tag{justify-self:start}
@@ -2675,6 +2720,7 @@ const getHelp = () => [
     <ol>
       <li><b>Calendário:</b> toque em <b>⚡ Gerar as 11 rodadas da 1ª fase</b>. Adversário, data e local podem ser preenchidos depois. Na 2ª fase, use <b>＋ Adicionar jogo</b> (quartas e semi têm ida e volta; a final é jogo único).</li>
       <li><b>Antes do jogo:</b> mande o <b>convite de presença</b> no grupo dos atletas (veja "Confirmação de presença dos atletas").</li>
+      <li><b>Convocação:</b> no passo 3 do jogo, preencha o <b>horário de chegada</b> e o <b>endereço do campo</b> e toque no nome de cada convocado (✅ ❌ ⏳ mostram a resposta de cada um). <b>📣 Mensagem de convocação</b> monta o texto com o jogo, a chegada, o local e a lista, pronto para o grupo dos atletas.</li>
       <li><b>Depois do jogo:</b> abra o jogo e marque <b>quem compareceu</b> (o botão <b>Copiar confirmados</b> adianta o trabalho). Só quem foi entra na folha.</li>
       <li><b>Folha:</b> cada atleta recebe o valor por jogo da fase (1ª ou 2ª) + gasolina. Bônus "por ocorrência" (ex.: por gol) e "só se acontecer" são informados ali mesmo.</li>
       <li><b>Pagamento:</b> o financeiro toca em <b>Pago · Pix</b> ou <b>Dinheiro</b>. O valor fica guardado e entra no Caixa automaticamente.</li>
@@ -2717,13 +2763,15 @@ const getHelp = () => [
     <div class="hl">Entradas de patrocínio lançadas direto no Caixa também podem ser ligadas: ao escolher a categoria "Patrocínio", aparece o campo <b>Patrocinador</b>.</div>` },
   { id: "plano", ic: "📋", t: "Plano de jogo (escalação no campo)", h: `
     <ol>
-      <li>Escolha a <b>formação</b> (4-4-2, 4-3-3, 4-2-3-1, 4-1-4-1, 3-5-2 ou 5-3-2). O campo mostra as 11 posições.</li>
+      <li>Escolha a <b>formação</b>: são ${Object.keys(FORMACOES).length}, separadas em "com 4 defensores", "com 3 zagueiros" e "com 5 defensores". O campo mostra as 11 posições.</li>
+      <li><b>Para qual jogo?</b> (opcional): na montagem do elenco, deixe em "Nenhum". Escolhendo um jogo, cada jogador do plantel ganha a resposta dele ao convite: <b style="color:var(--good)">✓</b> vai, <b style="color:var(--bad)">✕</b> não vai, <b>?</b> sem resposta. Na lista, quem confirmou aparece primeiro e quem não vai aparece riscado.</li>
       <li><b>Toque numa posição</b> para escolher quem joga ali. Aparecem primeiro os jogadores <b>daquela posição</b>, do <b>Plantel</b> (borda azul) e do <b>Radar</b> (borda amarela, ainda não contratados). Dá para misturar os dois.</li>
       <li><b>Arraste</b> um jogador para mudar o lugar dele no campo (ex.: lateral mais avançado). Solte em cima de outro jogador para <b>trocar os dois</b> de posição.</li>
       <li>Em <b>Banco de reservas</b>, adicione até 14 reservas.</li>
       <li>A <b>Análise</b> mostra: o custo por jogo dos titulares e do banco, quanto custaria a mais contratar os do radar (e as luvas), como ficariam as <b>vagas</b> de Sertãozinho e de fora e quem está <b>fora de posição</b> (marcado com <b style="color:var(--bad)">!</b>).</li>
       <li><b>Nada é salvo sozinho.</b> Toque em <b>💾 Salvar</b> para guardar o plano com um nome. Depois, ele aparece em "Planos salvos" para toda a diretoria. <b>Salvar como novo</b> cria uma cópia para testar variações.</li>
       <li><b>📷 Imagem</b> gera uma figura do campo (sem valores) para mandar no WhatsApp.</li>
+      <li><b>⚖️ Comparar</b> mostra dois planos ao mesmo tempo: o <b>A em azul</b> e o <b>B em branco</b>, frente a frente no <b>mesmo campo</b> ou em dois campos <b>lado a lado</b>. Embaixo aparecem quem entra e quem sai de um para o outro, quem muda de posição e a diferença de custo, de vagas e de quem está fora de posição.</li>
     </ol>
     <div class="hl">O plano é só uma simulação: <b>não contrata nem muda ninguém</b> no Plantel ou no Radar.</div>` },
   { id: "liga", ic: "📑", t: "Liga: documentação e Copa Fácil", h: `
@@ -3356,12 +3404,18 @@ function openJogo(id) {
       </form>
       <div class="sec-modal"><h4>2. Confirmação de presença <span style="display:flex;gap:6px;flex-wrap:wrap" id="jg-conv-btns"></span></h4>
         <div id="jg-conf"></div></div>
-      <div class="sec-modal"><h4>3. Quem compareceu <span style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm edit-only" data-act="pres-confirmados">Copiar confirmados</button><button class="btn sm edit-only" data-act="pres-todos">Marcar todos</button><button class="btn sm ghost edit-only" data-act="pres-limpar">Limpar</button></span></h4>
+      <div class="sec-modal"><h4>3. Convocação <button class="btn sm royal" data-act="convoc-msg">📣 Mensagem de convocação</button></h4>
+        <div class="conv-campos">
+          <div class="f"><label for="cv-chegada">Horário de chegada</label><input class="input" type="time" id="cv-chegada" data-act="convoc-campo" data-k="chegada" value="${esc((j.convocacao || {}).chegada || "")}" ${state.readOnly ? "disabled" : ""}></div>
+          <div class="f"><label for="cv-endereco">Endereço do campo</label><input class="input" id="cv-endereco" data-act="convoc-campo" data-k="endereco" maxlength="200" value="${esc((j.convocacao || {}).endereco || "")}" placeholder="Rua, número e bairro (ou link do mapa)" ${state.readOnly ? "disabled" : ""}></div>
+        </div>
+        <div id="jg-convoc"></div></div>
+      <div class="sec-modal"><h4>4. Quem compareceu <span style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm edit-only" data-act="pres-confirmados">Copiar confirmados</button><button class="btn sm edit-only" data-act="pres-todos">Marcar todos</button><button class="btn sm ghost edit-only" data-act="pres-limpar">Limpar</button></span></h4>
         <p class="hint" style="margin:-4px 0 10px">Toque no nome de quem foi ao jogo. Só quem compareceu entra na folha de pagamento.</p>
         <div id="jg-pres"></div></div>
-      <div class="sec-modal"><h4>4. Folha de pagamento <span style="display:flex;gap:6px"><button class="btn sm" data-act="folha-whats">💬 Folha para o WhatsApp</button></span></h4>
+      <div class="sec-modal"><h4>5. Folha de pagamento <span style="display:flex;gap:6px"><button class="btn sm" data-act="folha-whats">💬 Folha para o WhatsApp</button></span></h4>
         <div id="jg-folha"></div></div>
-      <div class="sec-modal"><h4>5. Custo real do jogo <button class="btn sm edit-only" data-act="lanc-novo" data-tipo="saida" data-jogo="${esc(id)}">＋ Gasto deste jogo</button></h4>
+      <div class="sec-modal"><h4>6. Custo real do jogo <button class="btn sm edit-only" data-act="lanc-novo" data-tipo="saida" data-jogo="${esc(id)}">＋ Gasto deste jogo</button></h4>
         <div id="jg-custo"></div></div>
     </div>
     <div class="modal-foot"><button class="btn danger edit-only" data-act="jogo-excluir">Excluir jogo</button><span class="spacer"></span><button class="btn primary" data-act="close">Fechar</button></div>
@@ -3387,6 +3441,7 @@ function renderJogoModal() {
   $("#jg-titulo").textContent = `${rotuloJogo(j)} · ${j.mando === "fora" ? "@ " : "vs "}${j.adversario || "adversário a definir"}`;
   $("#jg-sub").textContent = `${FASES[j.fase]} · ${dataJogoBR(j)}${j.local ? ` · ${j.local}` : ""}`;
   renderConfirmacao(j);
+  renderConvocacao(j);
   renderCustoJogo(j);
   const pres = new Set(j.presentes || []), pg = j.pagamentos || {};
   const atletas = [...state.plantel].sort((a, b) => (POSICOES.indexOf(a.posicao) - POSICOES.indexOf(b.posicao)) || String(a.nome).localeCompare(b.nome, "pt-BR"));
@@ -3396,7 +3451,7 @@ function renderJogoModal() {
   }).join("")}</div>` : `<div class="empty-state">Cadastre atletas no Plantel para marcar presença.</div>`;
 
   const fo = folhaJogo(j);
-  if (!fo.linhas.length) { $("#jg-folha").innerHTML = `<div class="empty-state"><b>Nenhum atleta marcado como presente</b>Marque quem compareceu no passo 3.</div>`; return; }
+  if (!fo.linhas.length) { $("#jg-folha").innerHTML = `<div class="empty-state"><b>Nenhum atleta marcado como presente</b>Marque quem compareceu no passo 4.</div>`; return; }
   $("#jg-folha").innerHTML = `<div class="table-wrap" style="margin-top:0"><table class="folha"><thead><tr><th>Atleta</th><th class="num">Jogo (${ehFase2(j) ? "2ª fase" : "1ª fase"})</th><th class="num">Gasolina</th><th>Bônus do jogo</th><th class="num">Total</th><th class="num">Pagamento</th></tr></thead><tbody>
     ${fo.linhas.map(l => {
       const c = l.calc;
@@ -3426,6 +3481,45 @@ function renderCustoJogo(j) {
   box.innerHTML = `<div class="calc"><div><span>Folha dos atletas</span><b>${money(c.fo.total)}</b></div><div><span>Outros gastos</span><b>${money(c.outros)}</b></div><div><span>Custo real do jogo</span><b>${money(c.total)}</b></div></div>
     ${c.gastos.length ? `<div class="lista" style="margin-top:10px">${c.gastos.map(l => `<div class="it" data-act="lanc-editar" data-id="${esc(l.id)}" style="cursor:pointer"><div class="tx"><b>${esc(l.descricao || l.categoria)}</b><small>${esc(l.categoria)} · ${l.aPagar ? `conta a pagar${l.data ? ` (vence ${dataBR(l.data)})` : ""}` : l.data ? dataBR(l.data) : "sem data"}</small></div><span class="v sai">${money(l.valor)}</span></div>`).join("")}</div>`
       : `<p class="hint" style="margin-top:8px">Nenhum outro gasto ligado a este jogo. Use <b>＋ Gasto deste jogo</b> para lançar água, campo, torcida ou festa. Ao lançar uma saída no Caixa, também dá para escolher o jogo.</p>`}`;
+}
+/* ---------- Convocação: a lista de quem vai para o jogo, com chegada e endereço, para o grupo dos atletas ---------- */
+const atletasPorPosicao = () => [...state.plantel].sort((a, b) => (POSICOES.indexOf(a.posicao) - POSICOES.indexOf(b.posicao)) || String(a.nome).localeCompare(b.nome, "pt-BR"));
+function renderConvocacao(j) {
+  const box = $("#jg-convoc"); if (!box) return;
+  const cv = j.convocacao || {}, sel = new Set(cv.atletas || []), k = confJogo(j);
+  ["chegada", "endereco"].forEach(c => { const inp = $("#cv-" + c); if (inp && document.activeElement !== inp) inp.value = cv[c] || ""; });   // não apaga o que alguém está digitando
+  if (!state.plantel.length) { box.innerHTML = `<div class="empty-state">Cadastre atletas no Plantel para convocar.</div>`; return; }
+  const ic = p => ({ vou: "✅", nao: "❌" })[k.resp(p)] || "⏳";
+  const n = state.plantel.filter(p => sel.has(p.id)).length;
+  box.innerHTML = `<p class="hint" style="margin:4px 0 10px">Toque no nome de cada convocado. Ao lado do nome: ✅ confirmou · ❌ não vai · ⏳ sem resposta. <b id="cv-total">${n} convocado${n === 1 ? "" : "s"}</b>.</p>
+    <div class="pres">${atletasPorPosicao().map(p => `<label class="${sel.has(p.id) ? "on" : ""}"><input type="checkbox" data-act="convoc-toggle" data-id="${esc(p.id)}" ${sel.has(p.id) ? "checked" : ""} ${state.readOnly ? "disabled" : ""}><span>${ic(p)} ${esc(p.nome)}<small>${esc(POS_SIGLA[p.posicao] || "")} · ${p.origem === "fora" ? "de fora" : "Sertãozinho"}</small></span></label>`).join("")}</div>`;
+}
+async function toggleConvocado(id, on) {
+  const j = find("jogos", state.jogoOpen); if (!j) return;
+  await opsDoc("jogos", j.id, [on ? { c: ["convocacao", "atletas"], add: [id] } : { c: ["convocacao", "atletas"], remove: [id] }], j);
+}
+async function setCampoConvocacao(k, valor) {
+  const j = find("jogos", state.jogoOpen); if (!j || !["chegada", "endereco"].includes(k)) return;
+  const v = String(valor || "").trim().slice(0, 200);
+  if (v === ((j.convocacao || {})[k] || "")) return;
+  if (await opsDoc("jogos", j.id, [v ? { c: ["convocacao", k], v } : { c: ["convocacao", k], del: true }], j)) toast(k === "chegada" ? (v ? `Chegada às ${v}` : "Horário de chegada apagado") : "Endereço salvo", "good");
+}
+function textoConvocacao(j) {
+  const cv = j.convocacao || {}, sel = new Set(cv.atletas || []), lista = atletasPorPosicao().filter(p => sel.has(p.id));
+  const L = [`📣 *AMDC FC · Convocação*`, ``, `*${rotuloJogo(j)}* · ${j.mando === "fora" ? "fora, contra" : "contra"} ${j.adversario || "adversário a definir"}`,
+    `📅 ${dataLonga(j.data)}${j.hora ? ` · jogo às ${j.hora}` : ""}`];
+  if (cv.chegada) L.push(`⏰ Chegada: *${cv.chegada}*`);
+  if (j.local) L.push(`📍 ${j.local}`);
+  if (cv.endereco) L.push(`🗺️ ${cv.endereco}`);
+  L.push(``, `*Convocados (${lista.length}):*`, ...lista.map(p => `• ${firstLast(p.nome)}`));
+  return L.join("\n");
+}
+function mensagemConvocacao() {
+  const j = find("jogos", state.jogoOpen); if (!j) return;
+  const sel = new Set((j.convocacao || {}).atletas || []);
+  if (!state.plantel.some(p => sel.has(p.id))) { toast("Marque pelo menos um convocado.", "bad"); return; }
+  registrar(`gerou a convocação de ${rotuloJogo(j)} (${state.plantel.filter(p => sel.has(p.id)).length} atletas)`);
+  abrirTexto("Convocação", "Toque em \"Abrir no WhatsApp\" e escolha o grupo dos atletas", textoConvocacao(j), j.id);
 }
 let extraTimer = null;
 async function setExtra(id, bonus, qtd) {
@@ -4165,14 +4259,39 @@ function fecharRelatorio() {
    ========================================================= */
 // x: 0 (esquerda) a 100 (direita) · y: 0 (ataque, em cima) a 100 (nosso gol, embaixo)
 const DEF4 = [["Lateral direito", 86, 70], ["Zagueiro", 62, 77], ["Zagueiro", 38, 77], ["Lateral esquerdo", 14, 70]];
+const DEF3 = [["Zagueiro", 72, 76], ["Zagueiro", 50, 79], ["Zagueiro", 28, 76]];
+const DEF5 = [["Lateral direito", 88, 66], ["Zagueiro", 70, 77], ["Zagueiro", 50, 79], ["Zagueiro", 30, 77], ["Lateral esquerdo", 12, 66]];
+const ALAS = y => [["Lateral direito", 88, y], ["Lateral esquerdo", 12, y]];
 const FORMACOES = {
+  // com 4 defensores
   "4-4-2": [...DEF4, ["Meia", 84, 46], ["Volante", 60, 53], ["Volante", 40, 53], ["Meia", 16, 46], ["Centroavante", 62, 20], ["Centroavante", 38, 20]],
+  "4-4-2 losango": [...DEF4, ["Volante", 50, 59], ["Meia", 74, 47], ["Meia", 26, 47], ["Meia-atacante", 50, 35], ["Centroavante", 62, 18], ["Centroavante", 38, 18]],
+  "4-4-1-1": [...DEF4, ["Meia", 84, 47], ["Volante", 60, 54], ["Volante", 40, 54], ["Meia", 16, 47], ["Meia-atacante", 50, 33], ["Centroavante", 50, 16]],
   "4-3-3": [...DEF4, ["Volante", 50, 56], ["Meia", 70, 44], ["Meia", 30, 44], ["Ponta direita", 82, 22], ["Centroavante", 50, 17], ["Ponta esquerda", 18, 22]],
+  "4-3-3 com dois volantes": [...DEF4, ["Volante", 64, 56], ["Volante", 36, 56], ["Meia-atacante", 50, 40], ["Ponta direita", 82, 22], ["Centroavante", 50, 17], ["Ponta esquerda", 18, 22]],
   "4-2-3-1": [...DEF4, ["Volante", 62, 57], ["Volante", 38, 57], ["Ponta direita", 82, 36], ["Meia-atacante", 50, 38], ["Ponta esquerda", 18, 36], ["Centroavante", 50, 16]],
   "4-1-4-1": [...DEF4, ["Volante", 50, 59], ["Ponta direita", 84, 40], ["Meia", 62, 44], ["Meia", 38, 44], ["Ponta esquerda", 16, 40], ["Centroavante", 50, 18]],
-  "3-5-2": [["Zagueiro", 72, 76], ["Zagueiro", 50, 79], ["Zagueiro", 28, 76], ["Lateral direito", 88, 50], ["Volante", 63, 57], ["Volante", 37, 57], ["Lateral esquerdo", 12, 50], ["Meia-atacante", 50, 39], ["Centroavante", 62, 18], ["Centroavante", 38, 18]],
-  "5-3-2": [["Lateral direito", 88, 66], ["Zagueiro", 70, 77], ["Zagueiro", 50, 79], ["Zagueiro", 30, 77], ["Lateral esquerdo", 12, 66], ["Volante", 50, 55], ["Meia", 72, 45], ["Meia", 28, 45], ["Centroavante", 62, 20], ["Centroavante", 38, 20]],
+  "4-3-2-1": [...DEF4, ["Volante", 50, 58], ["Meia", 72, 48], ["Meia", 28, 48], ["Meia-atacante", 64, 32], ["Meia-atacante", 36, 32], ["Centroavante", 50, 16]],
+  "4-5-1": [...DEF4, ["Ponta direita", 85, 42], ["Meia", 66, 48], ["Volante", 50, 57], ["Meia", 34, 48], ["Ponta esquerda", 15, 42], ["Centroavante", 50, 17]],
+  "4-2-2-2": [...DEF4, ["Volante", 62, 57], ["Volante", 38, 57], ["Meia-atacante", 74, 38], ["Meia-atacante", 26, 38], ["Centroavante", 62, 18], ["Centroavante", 38, 18]],
+  "4-2-4": [...DEF4, ["Volante", 62, 55], ["Volante", 38, 55], ["Ponta direita", 84, 24], ["Centroavante", 60, 18], ["Centroavante", 40, 18], ["Ponta esquerda", 16, 24]],
+  // com 3 zagueiros
+  "3-5-2": [...DEF3, ...ALAS(50), ["Volante", 63, 57], ["Volante", 37, 57], ["Meia-atacante", 50, 39], ["Centroavante", 62, 18], ["Centroavante", 38, 18]],
+  "3-4-3": [...DEF3, ...ALAS(52), ["Volante", 62, 56], ["Volante", 38, 56], ["Ponta direita", 80, 24], ["Centroavante", 50, 17], ["Ponta esquerda", 20, 24]],
+  "3-4-1-2": [...DEF3, ...ALAS(52), ["Volante", 62, 56], ["Volante", 38, 56], ["Meia-atacante", 50, 37], ["Centroavante", 62, 18], ["Centroavante", 38, 18]],
+  "3-4-2-1": [...DEF3, ...ALAS(52), ["Volante", 62, 56], ["Volante", 38, 56], ["Meia-atacante", 66, 34], ["Meia-atacante", 34, 34], ["Centroavante", 50, 16]],
+  "3-1-4-2": [...DEF3, ["Volante", 50, 61], ...ALAS(46), ["Meia", 63, 46], ["Meia", 37, 46], ["Centroavante", 62, 18], ["Centroavante", 38, 18]],
+  "3-6-1": [...DEF3, ...ALAS(50), ["Volante", 62, 58], ["Volante", 38, 58], ["Meia", 66, 40], ["Meia", 34, 40], ["Centroavante", 50, 17]],
+  // com 5 defensores
+  "5-3-2": [...DEF5, ["Volante", 50, 55], ["Meia", 72, 45], ["Meia", 28, 45], ["Centroavante", 62, 20], ["Centroavante", 38, 20]],
+  "5-4-1": [...DEF5, ["Ponta direita", 84, 42], ["Volante", 60, 52], ["Volante", 40, 52], ["Ponta esquerda", 16, 42], ["Centroavante", 50, 18]],
+  "5-2-3": [...DEF5, ["Volante", 62, 52], ["Volante", 38, 52], ["Ponta direita", 80, 26], ["Centroavante", 50, 18], ["Ponta esquerda", 20, 26]],
+  "5-2-1-2": [...DEF5, ["Volante", 62, 54], ["Volante", 38, 54], ["Meia-atacante", 50, 38], ["Centroavante", 62, 18], ["Centroavante", 38, 18]],
 };
+const GRUPOS_FORMACAO = [["Com 4 defensores", "4"], ["Com 3 zagueiros", "3"], ["Com 5 defensores", "5"]];
+function opcoesFormacao(atual) {
+  return GRUPOS_FORMACAO.map(([l, d]) => `<optgroup label="${l}">${Object.keys(FORMACOES).filter(f => f[0] === d).map(f => `<option value="${f}" ${f === atual ? "selected" : ""}>${f}</option>`).join("")}</optgroup>`).join("");
+}
 const MAX_BANCO = 14;
 const slotsDe = f => [{ pos: "Goleiro", x: 50, y: 92 }, ...(FORMACOES[f] || FORMACOES["4-4-2"]).map(([pos, x, y]) => ({ pos, x, y }))];
 const planoVazio = (f = "4-4-2") => ({ id: null, nome: "", formacao: f, titulares: slotsDe(f).map(s => ({ ...s, ref: "" })), banco: [] });
@@ -4186,6 +4305,15 @@ function jogadorRef(ref) {
 }
 const casaPos = (p, pos) => !!p && (p.posicao === pos || p.posicao2 === pos || ((p.posicao === "Ponta" || p.posicao2 === "Ponta") && /^Ponta /.test(pos)));
 const planoAtual = () => state.plano || (state.plano = planoVazio());
+// Jogo opcional do plano: sem jogo, o plano serve para a montagem do elenco; com jogo, mostra quem confirmou presença
+const jogoDoPlano = pl => (pl && pl.jogoId && find("jogos", pl.jogoId)) || null;
+const respNoJogo = (jg, j) => !jg || !j || j.col !== "plantel" ? "" : (((jg.confirmacoes || {})[j.p.id] || {}).resp || "sem");
+const CF_ICONE = { vou: "✓", nao: "✕", sem: "?" }, CF_TEXTO = { vou: "✅ vai", nao: "❌ não vai", sem: "⏳ sem resposta" };
+const nomeJogo = j => `${rotuloJogo(j)} · ${j.mando === "fora" ? "@ " : "vs "}${j.adversario || "a definir"}${j.data ? ` · ${dataBR(j.data).slice(0, 5)}` : ""}`;
+function opcoesJogoPlano(pl) {
+  const lista = [...state.jogos].filter(j => !jogoRealizado(j) || j.id === pl.jogoId).sort(ordenarJogos);
+  return `<option value="">Nenhum (montagem do elenco)</option>${lista.map(j => `<option value="${esc(j.id)}" ${j.id === pl.jogoId ? "selected" : ""}>${esc(nomeJogo(j))}</option>`).join("")}`;
+}
 function marcarSujo() { state.planoSujo = true; renderPlano(); }
 function trocarFormacao(f) {
   const pl = planoAtual(), velhos = pl.titulares.filter(t => t.ref).map(t => ({ ...t }));
@@ -4204,7 +4332,9 @@ function analisePlano(pl = planoAtual()) {
   const conta = o => state.plantel.filter(p => (p.origem || "sertaozinho") === o).length + doRadar.filter(j => j.p.origem === o).length;
   const foraPos = tit.filter(x => !casaPos(x.j.p, x.t.pos)).map(x => ({ nome: x.j.p.nome, dele: x.j.p.posicao || "posição ?", aqui: x.t.pos }));
   const elencoComRadar = state.plantel.reduce((s, p) => s + custoJogo(p), 0) + soma(doRadar);
-  return { tit, ban, doPlantel, doRadar, custoTit: soma(tit.map(x => x.j)), custoBanco: soma(ban), custoPlantel: soma(doPlantel), custoRadar: soma(doRadar),
+  const jg = jogoDoPlano(pl), conf = { vou: [], sem: [], nao: [] };
+  if (jg) doPlantel.forEach(j => conf[respNoJogo(jg, j)].push(j.p));
+  return { jg, conf, tit, ban, doPlantel, doRadar, custoTit: soma(tit.map(x => x.j)), custoBanco: soma(ban), custoPlantel: soma(doPlantel), custoRadar: soma(doRadar),
     luvasRadar: doRadar.reduce((s, j) => s + num(j.p.assinatura), 0), sz: conta("sertaozinho"), fo: conta("fora"), semOrigem: doRadar.filter(j => !["sertaozinho", "fora"].includes(j.p.origem)).length,
     foraPos, elencoComRadar, vazias: pl.titulares.filter(t => !jogadorRef(t.ref)).length };
 }
@@ -4213,20 +4343,21 @@ function renderPlano() {
   const salvos = [...state.planos].sort((x, y) => String(x.nome).localeCompare(y.nome, "pt-BR"));
   $("#plano-barra").innerHTML = `
     <div class="f" style="min-width:200px;flex:1"><label for="pj-salvos">Planos salvos</label><select class="select" id="pj-salvos" data-act="plano-abrir"><option value="">${pl.id ? "— novo plano —" : "Plano novo (ainda não salvo)"}</option>${salvos.map(s => `<option value="${esc(s.id)}" ${s.id === pl.id ? "selected" : ""}>${esc(s.nome)} · ${esc(s.formacao)}</option>`).join("")}</select></div>
-    <div class="f"><label for="pj-form">Formação</label><select class="select" id="pj-form" data-act="plano-formacao">${Object.keys(FORMACOES).map(f => `<option ${f === pl.formacao ? "selected" : ""}>${f}</option>`).join("")}</select></div>
-    <div class="pj-acoes"><button class="btn" data-act="plano-novo">＋ Novo</button><button class="btn primary edit-only" data-act="plano-salvar" ${state.planoSujo || !pl.id ? "" : "disabled"}>💾 Salvar${state.planoSujo ? " *" : ""}</button>
+    <div class="f"><label for="pj-form">Formação</label><select class="select" id="pj-form" data-act="plano-formacao">${opcoesFormacao(pl.formacao)}</select></div>
+    <div class="f" style="min-width:200px;flex:1"><label for="pj-jogo">Para qual jogo? <span class="hint" style="font-weight:500">(opcional)</span></label><select class="select" id="pj-jogo" data-act="plano-jogo">${opcoesJogoPlano(pl)}</select></div>
+    <div class="pj-acoes"><button class="btn" data-act="plano-novo">＋ Novo</button><button class="btn" data-act="plano-comparar">⚖️ Comparar</button><button class="btn primary edit-only" data-act="plano-salvar" ${state.planoSujo || !pl.id ? "" : "disabled"}>💾 Salvar${state.planoSujo ? " *" : ""}</button>
       <button class="btn edit-only" data-act="plano-salvar-como" ${pl.id ? "" : "hidden"}>Salvar como novo</button><button class="btn" data-act="plano-imagem">📷 Imagem</button>
       ${pl.id ? `<button class="btn ghost edit-only" data-act="plano-excluir" title="Excluir este plano">🗑</button>` : ""}</div>
     <p class="hint pj-status">${pl.id ? `<b>${esc(pl.nome)}</b>${state.planoSujo ? " · <span style=\"color:var(--warn)\">alterações ainda não salvas</span>" : " · salvo"}` : state.planoSujo ? `<span style="color:var(--warn)">Plano novo, ainda não salvo. Toque em <b>💾 Salvar</b> para guardar.</span>` : "Monte a escalação: toque numa posição para escolher o jogador."}</p>`;
   const el = pl.titulares.map((t, i) => {
-    const j = jogadorRef(t.ref), fora = j && !casaPos(j.p, t.pos);
-    return `<button class="jog ${j ? j.col : "vazio"}" data-slot="${i}" style="left:${t.x}%;top:${t.y}%" title="${esc(t.pos)}${j ? ` · ${esc(j.p.nome)}` : ""}">
-      <span class="bola">${j ? esc(initials(j.p.nome)) : esc(POS_SIGLA[t.pos] || "?")}</span>${fora ? `<span class="alerta" title="Fora de posição">!</span>` : ""}
+    const j = jogadorRef(t.ref), fora = j && !casaPos(j.p, t.pos), cf = respNoJogo(a.jg, j);
+    return `<button class="jog ${j ? j.col : "vazio"}${cf ? " cf-" + cf : ""}" data-slot="${i}" style="left:${t.x}%;top:${t.y}%" title="${esc(t.pos)}${j ? ` · ${esc(j.p.nome)}` : ""}${cf ? ` · ${CF_TEXTO[cf]}` : ""}">
+      <span class="bola">${j ? esc(initials(j.p.nome)) : esc(POS_SIGLA[t.pos] || "?")}</span>${fora ? `<span class="alerta" title="Fora de posição">!</span>` : ""}${cf ? `<span class="cfm ${cf}">${CF_ICONE[cf]}</span>` : ""}
       <span class="nome">${j ? esc(firstLast(j.p.nome)) : `+ ${esc(POS_SIGLA[t.pos] || "")}`}</span></button>`;
   }).join("");
   $("#plano-campo").innerHTML = `<div class="l-borda"></div><div class="l-meio"></div><div class="l-circ"></div><div class="l-area t"></div><div class="l-area b"></div><div class="l-peq t"></div><div class="l-peq b"></div>${el}`;
   $("#plano-banco").innerHTML = `<div class="pj-h"><h3>🪑 Banco de reservas <span class="tag neutral">${pl.banco.length}/${MAX_BANCO}</span></h3>${pl.banco.length < MAX_BANCO ? `<button class="btn sm" data-act="plano-banco-add">＋ Reserva</button>` : ""}</div>
-    ${pl.banco.length ? `<div class="pj-banco">${pl.banco.map((r, i) => { const j = jogadorRef(r); return `<span class="pj-chip ${j ? j.col : ""}"><span>${j ? esc(firstLast(j.p.nome)) : "jogador não encontrado"}<small>${j ? esc(POS_SIGLA[j.p.posicao] || "") + (j.col === "radar" ? " · radar" : "") : ""}</small></span><button data-act="plano-banco-rem" data-i="${i}" aria-label="Tirar do banco">✕</button></span>`; }).join("")}</div>` : `<p class="hint">Nenhum reserva ainda.</p>`}`;
+    ${pl.banco.length ? `<div class="pj-banco">${pl.banco.map((r, i) => { const j = jogadorRef(r); return `<span class="pj-chip ${j ? j.col : ""}"><span>${j ? esc(firstLast(j.p.nome)) : "jogador não encontrado"}<small>${j ? esc(POS_SIGLA[j.p.posicao] || "") + (j.col === "radar" ? " · radar" : "") + (respNoJogo(a.jg, j) ? " · " + CF_TEXTO[respNoJogo(a.jg, j)] : "") : ""}</small></span><button data-act="plano-banco-rem" data-i="${i}" aria-label="Tirar do banco">✕</button></span>`; }).join("")}</div>` : `<p class="hint">Nenhum reserva ainda.</p>`}`;
   const vagasSz = a.sz > VAGAS.sertaozinho, vagasFo = a.fo > VAGAS.fora;
   $("#plano-analise").innerHTML = `
     <div class="pj-h"><h3>📊 Análise</h3></div>
@@ -4239,6 +4370,7 @@ function renderPlano() {
     <div class="pj-linha ${vagasSz || vagasFo ? "ruim" : "boa"}"><b>Vagas</b> (contratando os do radar): Sertãozinho <b>${a.sz}/${VAGAS.sertaozinho}</b> · De fora <b>${a.fo}/${VAGAS.fora}</b>${vagasSz || vagasFo ? ` · ⚠️ passa ${vagasSz ? `${a.sz - VAGAS.sertaozinho} de Sertãozinho` : ""}${vagasSz && vagasFo ? " e " : ""}${vagasFo ? `${a.fo - VAGAS.fora} de fora` : ""}` : " · ✓ cabe"}${a.semOrigem ? ` · ${a.semOrigem} do radar sem origem definida` : ""}</div>
     <div class="pj-linha ${a.foraPos.length ? "ruim" : "boa"}"><b>Fora de posição:</b> ${a.foraPos.length ? a.foraPos.map(f => `${esc(firstLast(f.nome))} (${esc(f.dele)}) jogando de ${esc(f.aqui)}`).join(" · ") : "ninguém ✓"}</div>
     ${a.vazias ? `<div class="pj-linha"><b>Posições vazias:</b> ${a.vazias}</div>` : ""}
+    ${a.jg ? `<div class="pj-linha ${a.conf.nao.length ? "ruim" : a.conf.sem.length ? "" : "boa"}" id="pj-presenca"><b>Presença · ${esc(nomeJogo(a.jg))}</b> (titulares e banco do plantel): ${a.conf.vou.length} vão · ${a.conf.sem.length} sem resposta · ${a.conf.nao.length} não vão${a.conf.nao.length ? `<br>⚠️ Escalado, mas disse que não vai: ${a.conf.nao.map(p => esc(firstLast(p.nome))).join(", ")}` : ""}${a.jg.convite ? "" : `<br><span class="hint">O convite de presença deste jogo ainda não foi enviado (aba Jogos).</span>`}</div>` : ""}
     <p class="hint" style="margin-top:8px"><span class="pj-leg plantel"></span> Plantel &nbsp; <span class="pj-leg radar"></span> Radar (ainda não contratado) &nbsp; <b style="color:var(--bad)">!</b> fora de posição. Arraste um jogador para mudar o lugar dele no campo; solte em cima de outro para trocar os dois.</p>`;
   $("#cnt-plano").textContent = state.planos.length;
 }
@@ -4249,16 +4381,17 @@ function openEscolha(alvo) {
   const atual = alvo.slot != null ? pl.titulares[alvo.slot].ref : "";
   const lista = [...state.plantel.map(p => ({ ref: "plantel:" + p.id, p, col: "plantel" })),
     ...state.radar.filter(r => r.status !== "recusou").map(p => ({ ref: "radar:" + p.id, p, col: "radar" }))];
-  const ordem = x => (pos && casaPos(x.p, pos) ? 0 : 1) * 10 + (x.col === "plantel" ? 0 : 1);
+  const jg = jogoDoPlano(pl), cfDe = x => respNoJogo(jg, x), RANK_CF = { vou: 0, sem: 1, nao: 2 };
+  const ordem = x => (pos && casaPos(x.p, pos) ? 0 : 1) * 100 + (x.col === "plantel" ? 0 : 1) * 10 + (RANK_CF[cfDe(x)] ?? 0);
   lista.sort((a, b) => ordem(a) - ordem(b) || String(a.p.nome).localeCompare(b.p.nome, "pt-BR"));
-  const item = x => { const id = idade(x.p.nascimento);
-    return `<button class="pj-op ${x.col} ${x.ref === atual ? "on" : ""}" data-act="plano-escolher" data-ref="${esc(x.ref)}">
+  const item = x => { const id = idade(x.p.nascimento), cf = cfDe(x);
+    return `<button class="pj-op ${x.col} ${x.ref === atual ? "on" : ""}${cf ? " cf-" + cf : ""}" data-act="plano-escolher" data-ref="${esc(x.ref)}">
       <span class="sig">${esc(POS_SIGLA[x.p.posicao] || "?")}</span>
       <span class="tx"><b>${esc(x.p.nome)}</b><small>${esc(x.p.posicao || "posição ?")}${x.p.posicao2 ? ` / ${esc(x.p.posicao2)}` : ""}${x.p.pe ? ` · pé ${esc(x.p.pe.toLowerCase())}` : ""}${id != null ? ` · ${id} anos` : ""} · ${esc(ORIGEM_LABEL[x.p.origem] || "Origem ?")}</small></span>
-      <span class="dir"><span class="tag ${x.col === "plantel" ? "sz" : "warn"}">${x.col === "plantel" ? "Plantel" : "Radar"}</span><small>${money(custoJogo(x.p))}/jogo</small>${usados.has(x.ref) && x.ref !== atual ? `<small class="usado">já escalado · troca</small>` : ""}</span></button>`; };
+      <span class="dir"><span class="tag ${x.col === "plantel" ? "sz" : "warn"}">${x.col === "plantel" ? "Plantel" : "Radar"}</span><small>${money(custoJogo(x.p))}/jogo</small>${cf ? `<span class="cft ${cf}">${CF_TEXTO[cf]}</span>` : ""}${usados.has(x.ref) && x.ref !== atual ? `<small class="usado">já escalado · troca</small>` : ""}</span></button>`; };
   const casa = lista.filter(x => pos && casaPos(x.p, pos)), resto = lista.filter(x => !(pos && casaPos(x.p, pos)));
   openModal(`<div class="modal" id="pj-escolha">
-    <div class="modal-head"><div><h3>${alvo.slot != null ? `Quem joga de ${esc(pos)}?` : "Adicionar reserva"}</h3><p>Jogadores do Plantel e do Radar</p></div><button type="button" class="x" data-act="close" aria-label="Fechar">✕</button></div>
+    <div class="modal-head"><div><h3>${alvo.slot != null ? `Quem joga de ${esc(pos)}?` : "Adicionar reserva"}</h3><p>${jg ? `Jogadores do Plantel e do Radar · presença em ${esc(nomeJogo(jg))}` : "Jogadores do Plantel e do Radar"}</p></div><button type="button" class="x" data-act="close" aria-label="Fechar">✕</button></div>
     <div class="modal-body"><input class="input" id="pj-busca" placeholder="Procurar jogador…" autocomplete="off" style="margin-bottom:10px">
       <div id="pj-lista">${casa.length ? `<div class="pj-sec">Jogam de ${esc(pos)}</div>${casa.map(item).join("")}<div class="pj-sec">Outros jogadores</div>` : ""}${resto.map(item).join("") || `<p class="hint">Nenhum jogador no Plantel ou no Radar.</p>`}</div></div>
     <div class="modal-foot">${alvo.slot != null && atual ? `<button class="btn" data-act="plano-tirar">Deixar posição vazia</button><button class="btn" data-act="plano-pro-banco">Mandar para o banco</button>` : ""}<span class="spacer"></span><button class="btn" data-act="close">Cancelar</button></div></div>`);
@@ -4288,12 +4421,13 @@ async function salvarPlano(comoNovo) {
   const pl = planoAtual();
   let nome = pl.nome;
   if (!pl.id || comoNovo) {
-    nome = await pedirNomePlano(comoNovo ? `${pl.nome} (cópia)` : `${pl.formacao} · ${new Date().toLocaleDateString("pt-BR")}`);
+    const jg = jogoDoPlano(pl);
+    nome = await pedirNomePlano(comoNovo ? `${pl.nome} (cópia)` : jg ? `${rotuloJogo(jg)} · ${jg.adversario || pl.formacao}` : `${pl.formacao} · ${new Date().toLocaleDateString("pt-BR")}`);
     if (!nome) return;
   }
   const id = comoNovo || !pl.id ? newId("planos") : pl.id, now = new Date().toISOString();
   const antigo = pl.id && !comoNovo ? find("planos", pl.id) : null;
-  const doc = { nome, formacao: pl.formacao, titulares: pl.titulares.map(t => ({ pos: t.pos, x: Math.round(t.x * 10) / 10, y: Math.round(t.y * 10) / 10, ref: t.ref || "" })), banco: [...pl.banco],
+  const doc = { nome, formacao: pl.formacao, jogoId: jogoDoPlano(pl) ? pl.jogoId : "", titulares: pl.titulares.map(t => ({ pos: t.pos, x: Math.round(t.x * 10) / 10, y: Math.round(t.y * 10) / 10, ref: t.ref || "" })), banco: [...pl.banco],
     criadoEm: (antigo && antigo.criadoEm) || now, atualizadoEm: now };
   if (await saveDoc("planos", id, doc)) {
     state.plano = { ...JSON.parse(JSON.stringify(doc)), id }; state.planoSujo = false;
@@ -4401,7 +4535,7 @@ async function compartilharImagemPlano() {
 function resumoAbaPlano(o) {
   const pl = planoAtual(), a = analisePlano(pl);
   const blocos = [cabecalhoResumo("Plano de jogo")];
-  blocos.push([`*${(pl.nome || "Plano sem nome").toUpperCase()} · ${pl.formacao}*`, ...pl.titulares.map(t => { const j = jogadorRef(t.ref);
+  blocos.push([`*${(pl.nome || "Plano sem nome").toUpperCase()} · ${pl.formacao}*`, ...(a.jg ? [`Jogo: ${nomeJogo(a.jg)}`] : []), ...pl.titulares.map(t => { const j = jogadorRef(t.ref);
     return `• ${POS_SIGLA[t.pos] || t.pos}: ${j ? firstLast(j.p.nome) + (j.col === "radar" ? " (radar)" : "") : "—"}`; })]);
   const ban = pl.banco.map(jogadorRef).filter(Boolean);
   if (ban.length) blocos.push(["*BANCO*", `• ${ban.map(j => firstLast(j.p.nome) + (j.col === "radar" ? " (radar)" : "")).join(", ")}`]);
@@ -4409,6 +4543,86 @@ function resumoAbaPlano(o) {
   if (o.fin) blocos.push(["*CUSTO POR JOGO*", `• Titulares: ${money(a.custoTit)} · banco: ${money(a.custoBanco)}`, `• A mais, contratando o radar: ${money(a.custoRadar)}${a.luvasRadar ? ` (+ luvas ${money(a.luvasRadar)})` : ""}`,
     `• Vagas contratando o radar: Sertãozinho ${a.sz}/${VAGAS.sertaozinho} · De fora ${a.fo}/${VAGAS.fora}`]);
   return juntarBlocos(blocos);
+}
+
+/* ---------- Comparar dois planos lado a lado (só olha, não salva nada) ---------- */
+function planosParaComparar() {
+  const pl = planoAtual(), l = [];
+  if (!pl.id || state.planoSujo) l.push({ v: "__tela", nome: pl.id ? `${pl.nome} (com alterações não salvas)` : "Plano na tela (ainda não salvo)", pl });
+  [...state.planos].sort((x, y) => String(x.nome).localeCompare(y.nome, "pt-BR")).forEach(s => l.push({ v: s.id, nome: s.nome, pl: s }));
+  return l;
+}
+function openComparar() {
+  const l = planosParaComparar();
+  if (l.length < 2) { toast("Salve pelo menos dois planos para comparar.", "bad"); return; }
+  const pl = planoAtual(), a = !pl.id || state.planoSujo ? "__tela" : pl.id;
+  state.cmpPlano = { a, b: (l.find(x => x.v !== a) || l[1]).v };
+  const sel = lado => `<div class="f"><label for="pj-cmp-${lado}">Plano ${lado.toUpperCase()}</label><select class="select" id="pj-cmp-${lado}" data-act="plano-cmp" data-lado="${lado}">${l.map(x => `<option value="${esc(x.v)}" ${x.v === state.cmpPlano[lado] ? "selected" : ""}>${esc(x.nome)} · ${esc(x.pl.formacao)}</option>`).join("")}</select></div>`;
+  openModal(`<div class="modal wide" id="pj-cmp">
+    <div class="modal-head"><div><h3>Comparar planos</h3><p>Os dois campos, quem muda de um para o outro, o custo e as vagas</p></div><button type="button" class="x" data-act="close" aria-label="Fechar">✕</button></div>
+    <div class="modal-body"><div class="pj-cmp-sel">${sel("a")}${sel("b")}</div><div id="pj-cmp-corpo"></div></div>
+    <div class="modal-foot"><span class="spacer"></span><button class="btn primary" data-act="close">Fechar</button></div></div>`);
+  renderComparar();
+}
+// Time A = azul, time B = branco. Borda amarela tracejada = jogador do radar (ainda não contratado).
+const LINHAS_CAMPO = `<div class="l-borda"></div><div class="l-meio"></div><div class="l-circ"></div><div class="l-area t"></div><div class="l-area b"></div><div class="l-peq t"></div><div class="l-peq b"></div>`;
+function jogsTime(pl, time, pos) {
+  const jg = jogoDoPlano(pl);
+  return pl.titulares.map(t => {
+    const j = jogadorRef(t.ref), cf = respNoJogo(jg, j), fora = j && !casaPos(j.p, t.pos), [x, y] = pos(t);
+    return `<div class="jog time-${time} ${j ? j.col : "vazio"}${cf ? " cf-" + cf : ""}" style="left:${x}%;top:${y}%" title="${esc(t.pos)}${j ? ` · ${esc(j.p.nome)}` : ""}"><span class="bola">${j ? esc(initials(j.p.nome)) : esc(POS_SIGLA[t.pos] || "?")}</span>${fora ? `<span class="alerta">!</span>` : ""}${cf ? `<span class="cfm ${cf}">${CF_ICONE[cf]}</span>` : ""}<span class="nome">${j ? esc(firstLast(j.p.nome)) : esc(POS_SIGLA[t.pos] || "")}</span></div>`;
+  }).join("");
+}
+// Um campo para cada time
+const miniCampo = (pl, time) => `<div class="campo mini">${LINHAS_CAMPO}${jogsTime(pl, time, t => [t.x, t.y])}</div>`;
+// Os dois times no mesmo campo, frente a frente: A (azul) defende embaixo, B (branco) defende em cima
+const campoDuplo = (A, B) => `<div class="campo duplo">${LINHAS_CAMPO}${jogsTime(A, "a", t => [t.x, Math.round((50 + t.y * 0.46) * 10) / 10])}${jogsTime(B, "b", t => [100 - t.x, Math.round((50 - t.y * 0.46) * 10) / 10])}</div>`;
+function comparacaoPlanos(A, B) {
+  const tit = pl => new Map(pl.titulares.filter(t => jogadorRef(t.ref)).map(t => [t.ref, t.pos]));
+  const ban = pl => new Set(pl.banco.filter(r => jogadorRef(r)));
+  const tA = tit(A), tB = tit(B), bA = ban(A), bB = ban(B);
+  const nome = r => firstLast(jogadorRef(r).p.nome);
+  return {
+    saem: [...tA.keys()].filter(r => !tB.has(r)), entram: [...tB.keys()].filter(r => !tA.has(r)),
+    trocam: [...tA.keys()].filter(r => tB.has(r) && tA.get(r) !== tB.get(r)).map(r => `${nome(r)}: ${POS_SIGLA[tA.get(r)] || tA.get(r)} → ${POS_SIGLA[tB.get(r)] || tB.get(r)}`),
+    bancoSaem: [...bA].filter(r => !bB.has(r) && !tB.has(r)), bancoEntram: [...bB].filter(r => !bA.has(r) && !tA.has(r)), nome,
+  };
+}
+function renderComparar() {
+  const box = $("#pj-cmp-corpo"); if (!box || !state.cmpPlano) return;
+  const l = planosParaComparar(), ach = v => l.find(x => x.v === v) || l[0];
+  const A = ach(state.cmpPlano.a), B = ach(state.cmpPlano.b), aA = analisePlano(A.pl), aB = analisePlano(B.pl), d = comparacaoPlanos(A.pl, B.pl);
+  const modo = state.cmpPlano.modo || "mesmo";
+  const nomes = rs => rs.map(r => esc(d.nome(r))).join(", ");
+  const dif = (v, cls, txt) => v.length ? `<div class="${cls}">${txt}</div>` : "";
+  const igual = !d.saem.length && !d.entram.length && !d.trocam.length && !d.bancoSaem.length && !d.bancoEntram.length;
+  const din = (x, y) => { const v = y - x; return Math.abs(v) < 0.005 ? "igual" : `${v > 0 ? "+" : "−"} ${money(Math.abs(v))}`; };
+  const linha = (rot, va, vb, dd = "") => `<tr><td>${rot}</td><td class="num">${va}</td><td class="num">${vb}</td><td class="num">${dd}</td></tr>`;
+  const fp = a => a.foraPos.length ? a.foraPos.map(f => esc(firstLast(f.nome))).join(", ") : "ninguém";
+  const pres = a => a.jg ? `${a.conf.vou.length} vão · ${a.conf.sem.length} sem resp. · ${a.conf.nao.length} não vão` : "sem jogo";
+  const tituloTime = (x, t) => `<span class="pj-time ${t}"><span class="pj-cor"></span><b>${t.toUpperCase()} · ${esc(x.nome)}</b> <span class="tag neutral">${esc(x.pl.formacao)}</span></span>`;
+  box.innerHTML = `<div class="pj-cmp-modo seg-mini"><button class="${modo === "mesmo" ? "on" : ""}" data-act="plano-cmp-modo" data-v="mesmo">Mesmo campo</button><button class="${modo === "lado" ? "on" : ""}" data-act="plano-cmp-modo" data-v="lado">Lado a lado</button></div>
+    ${modo === "mesmo" ? `<div class="pj-cmp-duplo">${tituloTime(B, "b")}${campoDuplo(A.pl, B.pl)}${tituloTime(A, "a")}</div>`
+      : `<div class="pj-cmp-campos"><div>${tituloTime(A, "a")}${miniCampo(A.pl, "a")}</div><div>${tituloTime(B, "b")}${miniCampo(B.pl, "b")}</div></div>`}
+    <div class="pj-dif">${igual ? `<div>Os dois planos têm os mesmos jogadores nas mesmas posições.</div>` : `
+      ${dif(d.saem, "sai", `<b>Titulares só no A</b> (saem no B): ${nomes(d.saem)}`)}
+      ${dif(d.entram, "ent", `<b>Titulares só no B</b> (entram no B): ${nomes(d.entram)}`)}
+      ${dif(d.trocam, "", `<b>Mudam de posição:</b> ${d.trocam.map(esc).join(" · ")}`)}
+      ${dif(d.bancoSaem, "", `<b>Banco só no A:</b> ${nomes(d.bancoSaem)}`)}
+      ${dif(d.bancoEntram, "", `<b>Banco só no B:</b> ${nomes(d.bancoEntram)}`)}`}</div>
+    <div class="table-wrap" style="margin-top:0"><table class="pj-cmp-tab"><thead><tr><th></th><th class="num">A</th><th class="num">B</th><th class="num">B em relação ao A</th></tr></thead><tbody>
+      ${linha("Custo por jogo · titulares", money(aA.custoTit), money(aB.custoTit), din(aA.custoTit, aB.custoTit))}
+      ${linha("Custo por jogo · banco", money(aA.custoBanco), money(aB.custoBanco), din(aA.custoBanco, aB.custoBanco))}
+      ${linha("A mais, se contratar o radar", money(aA.custoRadar), money(aB.custoRadar), din(aA.custoRadar, aB.custoRadar))}
+      ${linha("Luvas de quem vem do radar", money(aA.luvasRadar), money(aB.luvasRadar), din(aA.luvasRadar, aB.luvasRadar))}
+      ${linha("Elenco todo por jogo, contratando o radar", money(aA.elencoComRadar), money(aB.elencoComRadar), din(aA.elencoComRadar, aB.elencoComRadar))}
+      ${linha("Vagas de Sertãozinho", `${aA.sz}/${VAGAS.sertaozinho}`, `${aB.sz}/${VAGAS.sertaozinho}`)}
+      ${linha("Vagas de fora", `${aA.fo}/${VAGAS.fora}`, `${aB.fo}/${VAGAS.fora}`)}
+      ${linha("Fora de posição", fp(aA), fp(aB))}
+      ${linha("Posições vazias", aA.vazias, aB.vazias)}
+      ${aA.jg || aB.jg ? linha("Presença no jogo do plano", pres(aA), pres(aB)) : ""}
+    </tbody></table></div>
+    <p class="hint" style="margin-top:8px">Azul = plano A · Branco = plano B · borda amarela tracejada = jogador do radar (ainda não contratado). Nada é salvo aqui.</p>`;
 }
 
 /* =========================================================
@@ -5311,7 +5525,7 @@ document.addEventListener("click", async e => {
   if (!el) return;
   const act = el.dataset.act, id = el.dataset.id;
   if (act === "prazo-set") return;
-  if (act === "plano-abrir" || act === "plano-formacao") return;
+  if (act === "plano-abrir" || act === "plano-formacao" || act === "plano-jogo" || act === "plano-cmp" || act === "convoc-toggle" || act === "convoc-campo") return;
   if (act === "link" || act === "status-quick" || act === "prio-quick" || act === "cmp-add" || act === "pres-toggle" || act === "extra-set" || act === "sim-toggle" || act === "orc-set") return;
   if (act === "cmp-toggle" || act === "cmp-remove") {
     toggleCompare(el.dataset.col, id);
@@ -5344,6 +5558,9 @@ document.addEventListener("click", async e => {
   if (act === "plano-salvar") return salvarPlano(false);
   if (act === "plano-salvar-como") return salvarPlano(true);
   if (act === "plano-imagem") return abrirImagemPlano();
+  if (act === "plano-comparar") return openComparar();
+  if (act === "plano-cmp-modo") { if (state.cmpPlano) state.cmpPlano.modo = el.dataset.v; return renderComparar(); }
+  if (act === "convoc-msg") return mensagemConvocacao();
   if (act === "plano-compartilhar") return compartilharImagemPlano();
   if (act === "plano-excluir") {
     const pl = planoAtual(); if (!pl.id) return;
@@ -5626,6 +5843,14 @@ document.addEventListener("change", async e => {
     state.plano = d ? { ...JSON.parse(JSON.stringify(d)), id: d.id } : planoVazio(planoAtual().formacao);
     state.planoSujo = false; renderPlano(); return;
   }
+  const pjg = e.target.closest('[data-act="plano-jogo"]');
+  if (pjg) { planoAtual().jogoId = pjg.value; return marcarSujo(); }
+  const pcm = e.target.closest('[data-act="plano-cmp"]');
+  if (pcm) { if (state.cmpPlano) state.cmpPlano[pcm.dataset.lado] = pcm.value; return renderComparar(); }
+  const cvt = e.target.closest('[data-act="convoc-toggle"]');
+  if (cvt) { if (state.readOnly) return; return toggleConvocado(cvt.dataset.id, cvt.checked); }
+  const cvc = e.target.closest('[data-act="convoc-campo"]');
+  if (cvc) { if (state.readOnly) return; return setCampoConvocacao(cvc.dataset.k, cvc.value); }
   const pf = e.target.closest('[data-act="plano-formacao"]');
   if (pf) return trocarFormacao(pf.value);
   const pz = e.target.closest('[data-act="prazo-set"]');
