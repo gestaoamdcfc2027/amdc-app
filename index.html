@@ -802,6 +802,9 @@ body.readonly .slot.empty{pointer-events:none;opacity:.7}
 /* ---------- Liga ---------- */
 .chk{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:112px;height:32px;border-radius:9px;border:1.5px solid var(--line);background:#fff;font-size:12.5px;font-weight:700;color:var(--muted);padding:0 10px}
 .chk.on{background:var(--good-soft);border-color:#9ED8B8;color:var(--good)}
+.temp-fim{margin-top:14px}
+.temp-antigas{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:12px;font-size:13.5px;color:var(--muted)}
+.pat-renovar{align-self:flex-start;margin:2px 0}
 .chk.na{border:0;background:transparent;color:#B4BBD3;font-weight:500;cursor:default;min-width:0}
 .equipe{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}
 .membro{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:12px 14px;display:grid;grid-template-columns:40px 1fr;gap:4px 12px;align-items:center}
@@ -887,7 +890,7 @@ body.readonly .slot.empty{pointer-events:none;opacity:.7}
     <div class="brand">
       <img class="crest" src="data:image/png;base64,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" alt="Escudo AMDC FC">
       <div>
-        <h1>AMDC FC <span>· Gestão 2027</span></h1>
+        <h1>AMDC FC <span id="hdr-ano">· Gestão 2027</span></h1>
         <p>Gestão do clube: jogos, caixa, elenco, radar e liga</p>
       </div>
       <div class="sync" id="sync"><span class="dot" id="syncDot"></span><span id="syncTxt">Conectando…</span></div>
@@ -1091,7 +1094,7 @@ body.readonly .slot.empty{pointer-events:none;opacity:.7}
   <section id="view-plantel" class="hidden">
     <div class="tab-intro">
       <div>
-        <h2>Plantel 2027</h2>
+        <h2 id="plantel-titulo">Plantel 2027</h2>
         <p>Os atletas <b>contratados</b> para a temporada: <b>25 vagas</b>, sendo 16 de Sertãozinho e 9 de fora. Os gastos são calculados automaticamente a partir do cadastro de cada atleta.</p>
       </div>
       <div class="intro-acts"><button class="help-link sum" data-act="summary-tab" data-tab="plantel" title="Resumo só desta aba, pronto para o WhatsApp"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Z"/></svg> Resumo desta aba</button><button class="help-link" data-act="help" data-topic="plantel">? Como funciona</button></div>
@@ -1147,7 +1150,7 @@ body.readonly .slot.empty{pointer-events:none;opacity:.7}
 <div id="login" class="login hidden">
   <form class="login-card" id="login-form" autocomplete="off">
     <img class="login-crest" alt="Escudo AMDC FC">
-    <h2>AMDC FC · Gestão 2027</h2>
+    <h2 id="login-titulo">AMDC FC · Gestão 2027</h2>
     <p>Plataforma da diretoria. Digite a senha para entrar.</p>
     <input class="input" id="login-senha" type="password" placeholder="Senha da diretoria" autocomplete="current-password" aria-label="Senha">
     <label class="login-lembrar"><input type="checkbox" id="login-lembrar" checked> Lembrar neste aparelho</label>
@@ -1202,7 +1205,9 @@ const MAX_CMP = 4;
 const TABS = ["inicio", "jogos", "financeiro", "patrocinios", "plantel", "radar", "plano", "liga"];
 const COLECOES_EXTRA = ["jogos", "caixa", "acoes", "equipe", "log", "patrocinios", "planos"];
 const IDEAL_PADRAO = { "Goleiro": 3, "Zagueiro": 4, "Lateral direito": 2, "Lateral esquerdo": 2, "Volante": 3, "Meia": 3, "Meia-atacante": 2, "Ponta direita": 2, "Ponta esquerda": 2, "Ponta": 0, "Centroavante": 2 };
-const CONFIG_PADRAO = { tetoMin: 6000, tetoMax: 8000, jogos1: 11, jogos2: 5, ideal: IDEAL_PADRAO };
+const CONFIG_PADRAO = { tetoMin: 6000, tetoMax: 8000, jogos1: 11, jogos2: 5, ideal: IDEAL_PADRAO, temporada: "2027" };
+// Ano da temporada atual (config/geral.temporada). Muda sozinho quando a diretoria encerra a temporada.
+const ANO = () => state.config.temporada || CONFIG_PADRAO.temporada;
 
 /* =========================================================
    Estado
@@ -1471,7 +1476,8 @@ function normConfig(c) {
   if (c.ideal) POSICOES.forEach(p => { if (c.ideal[p] != null) ideal[p] = Math.max(0, Math.round(num(c.ideal[p]))); });
   const jogos = (v, d) => (v != null && v !== "" ? Math.max(0, Math.round(num(v))) : d);
   return { tetoMin: c.tetoMin != null ? num(c.tetoMin) : CONFIG_PADRAO.tetoMin, tetoMax: c.tetoMax != null ? num(c.tetoMax) : CONFIG_PADRAO.tetoMax,
-    jogos1: jogos(c.jogos1, CONFIG_PADRAO.jogos1), jogos2: jogos(c.jogos2, CONFIG_PADRAO.jogos2), ideal };
+    jogos1: jogos(c.jogos1, CONFIG_PADRAO.jogos1), jogos2: jogos(c.jogos2, CONFIG_PADRAO.jogos2), ideal,
+    temporada: /^\d{4}$/.test(String(c.temporada || "")) ? String(c.temporada) : CONFIG_PADRAO.temporada };
 }
 async function saveLigaCfg(cfg) {
   if (db) return attempt(() => db.doc("config/liga").set(cfg));
@@ -1615,6 +1621,13 @@ function mostrarAbaAtiva() {
   bordasAbas();
 }
 function renderHeader() {
+  {
+    const ano = ANO(), arq = ARQ.ano ? " (encerrada)" : "";
+    document.title = "AMDC FC · Gestão " + ano;
+    $("#hdr-ano").textContent = "· Gestão " + ano + arq;
+    $("#plantel-titulo").textContent = "Plantel " + ano;
+    $("#login-titulo").textContent = "AMDC FC · Gestão " + ano;
+  }
   $("#cnt-radar").textContent = state.radar.length;
   $("#cnt-pat").textContent = state.patrocinios.length;
   $("#cnt-plantel").textContent = `${state.plantel.length}/${TOTAL_VAGAS}`;
@@ -1656,6 +1669,7 @@ function renderBanner() {
   else if (state.mode === "local") b.innerHTML = `<div class="banner warn">⚠️ <div><b>Modo de teste:</b> esta visualização não está conectada ao banco de dados da plataforma, então nada do que você cadastrar aqui será salvo. Abra a plataforma pelo link oficial para salvar.</div></div>`;
   else if (state.mode === "slow") b.innerHTML = `<div class="banner warn">⏳ <div>Os dados salvos estão demorando para carregar. Os números podem estar desatualizados até a conexão voltar.</div></div>`;
   else if (state.mode === "error") b.innerHTML = `<div class="banner bad">⛔ <div>${esc(state.errorMsg)} Recarregue a página para tentar de novo.</div></div>`;
+  else if (ARQ.ano) b.innerHTML = `<div class="banner info" id="banner-arquivo">📁 <div><b>Temporada ${esc(ARQ.ano)} (encerrada):</b> você está vendo como ela terminou, só para consulta. Nada pode ser alterado aqui. <button class="btn sm primary" data-act="temp-voltar">Voltar para ${esc(GSS.data.config.geral && GSS.data.config.geral.temporada || "a temporada atual")}</button></div></div>`;
   else if (PLATAFORMA === "google" && !WEB && APP_URL) b.innerHTML = `<div class="banner info" id="banner-app">📲 <div><b>O AMDC agora tem app!</b> Mais rápido e sem a faixa do Google. Abra pelo endereço novo e toque em "Adicionar à tela inicial". <a class="btn sm primary" href="${APP_URL}" target="_blank" rel="noopener" data-act="link" style="margin-left:6px">Abrir o app novo</a></div></div>`;
   else if (state.readOnly) b.innerHTML = `<div class="banner warn">👁 <div><b>Modo de consulta:</b> você pode ver tudo, mas só o presidente e os editores alteram dados. Os CPFs dos atletas ficam ocultos.</div></div>`;
   else b.innerHTML = "";
@@ -1942,7 +1956,7 @@ function posMapHTML() {
 function openConfig() {
   const c = state.config;
   openModal(`<form class="modal" id="config-form" novalidate>
-    <div class="modal-head"><div><h3>Orçamento e elenco ideal</h3><p>Ajustes gerais da temporada 2027</p></div><button type="button" class="x" data-act="close" aria-label="Fechar">✕</button></div>
+    <div class="modal-head"><div><h3>Orçamento e elenco ideal</h3><p>Ajustes gerais da temporada ${ANO()}</p></div><button type="button" class="x" data-act="close" aria-label="Fechar">✕</button></div>
     <div class="modal-body">
       <div class="form-alert hidden" id="form-alert"></div>
       <fieldset class="fs"><legend>Teto de gasto por jogo</legend>
@@ -1984,7 +1998,7 @@ function openConfig() {
     form.querySelectorAll('[name^="ideal:"]').forEach(i => { ideal[i.name.slice(6)] = Math.max(0, Math.round(num(i.value))); });
     const btn = $("#save-btn"); btn.disabled = true; btn.textContent = "Salvando…";
     const jogos1 = Math.max(0, Math.round(num(form.jogos1.value))), jogos2 = Math.max(0, Math.round(num(form.jogos2.value)));
-    if (await saveConfig({ tetoMin, tetoMax, jogos1, jogos2, ideal, atualizadoEm: new Date().toISOString() })) { closeModal(); toast("Ajustes salvos", "good"); }
+    if (await saveConfig({ tetoMin, tetoMax, jogos1, jogos2, ideal, temporada: ANO(), atualizadoEm: new Date().toISOString() })) { closeModal(); toast("Ajustes salvos", "good"); }
     else { btn.disabled = false; btn.textContent = "Salvar"; }
   });
 }
@@ -2415,7 +2429,7 @@ const juntarBlocos = blocos => blocos.filter(b => b && b.length).map(b => b.join
 
 function buildSummary(o) {
   return juntarBlocos([
-    cabecalhoResumo("Gestão 2027"),
+    cabecalhoResumo("Gestão " + ANO()),
     secPlantel(o), secPosicoes(), secClube(o),
     o.elenco ? secElenco() : null,
     o.radar ? secRadar(o) : null,
@@ -2495,7 +2509,7 @@ function resumoAbaCaixa(o) {
   return juntarBlocos(blocos);
 }
 function resumoAbaPlantel(o) {
-  return juntarBlocos([cabecalhoResumo("Plantel 2027"), secPlantel(o), secPosicoes(), o.elenco ? secElenco() : null]);
+  return juntarBlocos([cabecalhoResumo("Plantel " + ANO()), secPlantel(o), secPosicoes(), o.elenco ? secElenco() : null]);
 }
 function resumoAbaRadar(o) {
   return juntarBlocos([cabecalhoResumo("Radar de contratações"), secRadar(o)]);
@@ -2592,7 +2606,7 @@ function renderWelcome() {
   if (state.guiaFechado || guiaVisto()) { el.innerHTML = ""; return; }
   el.innerHTML = `<div class="welcome">
     <div style="flex:1;min-width:240px">
-      <h3>Bem-vindo à gestão do AMDC FC 2027</h3>
+      <h3>Bem-vindo à gestão do AMDC FC ${ANO()}</h3>
       <p>Tudo do clube num lugar só, separado em abas:</p>
       <ol>
         <li><b>Início</b>: as pendências do dia, o próximo jogo e quem mexeu em quê.</li>
@@ -2630,7 +2644,7 @@ const getHelp = () => [
       <li><b>Jogos</b> — calendário da temporada, presença e folha de pagamento de cada jogo.</li>
       <li><b>Patrocínios</b> — quem patrocina o uniforme 1, o uniforme 2, o banner e o Instagram, os espaços livres para vender e quanto falta receber.</li>
       <li><b>Financeiro</b> — todo o dinheiro do clube: planejamento do elenco antes do campeonato, orçamento previsto × realizado e o caixa (entradas, saídas, pizzas, rifas, contas a pagar).</li>
-      <li><b>Plantel 2027</b> — os atletas contratados (25 vagas: 16 de Sertãozinho e 9 de fora), com os gastos calculados automaticamente.</li>
+      <li><b>Plantel ${ANO()}</b> — os atletas contratados (25 vagas: 16 de Sertãozinho e 9 de fora), com os gastos calculados automaticamente.</li>
       <li><b>Radar</b> — jogadores que o AMDC quer, mas ainda não contratou. É a "lista de mira": nenhum nome se perde.</li>
       <li><b>Plano de jogo</b> — monte escalações no campo com jogadores do Plantel e do Radar, misturando os dois, e veja custo, vagas e quem está fora de posição.</li>
       <li><b>Liga</b> — documentação para a Liga dos Árbitros, Copa Fácil, comissão técnica e diretoria.</li>
@@ -2674,6 +2688,7 @@ const getHelp = () => [
       <li><b>Saldo previsto até o fim:</b> caixa de hoje + patrocínio a receber − tudo o que ainda falta pagar até o fim do cenário escolhido (folhas, luvas, bônus garantidos, contas e o que sobra do orçamento). A folha dos próximos jogos usa o planejado até o 3º jogo e, depois, a média real. Bônus "só se acontecer" ficam numa linha à parte.</li>
       <li><b>Próximos 30 dias:</b> o que vence e o que entra no próximo mês: parcelas de luvas, parcelas de patrocínio, contas a pagar e a folha prevista dos jogos com data. O que passou da data aparece como <b>atrasado</b>.</li>
       <li><b>Planejamento do elenco:</b> para o pré-campeonato. Escolha o <b>cenário</b> (até onde o time vai) e veja o custo por jogo, o total da temporada, a média por jogador, o teto, para onde vai o dinheiro e o valor de cada atleta.</li>
+      <li><b>Fim da temporada</b> (no fim da Visão geral): depois do campeonato, com todos os atletas pagos, toque em <b>Encerrar a temporada</b>. A plataforma guarda uma cópia completa do ano e começa o próximo com o plantel, o radar, a equipe, o saldo do caixa e os patrocinadores "para renovar" (proposta 25% maior). As temporadas encerradas ficam em <b>Temporadas anteriores</b>, só para consulta.</li>
       <li><b>📄 Relatório da temporada:</b> botão no topo do Financeiro. Monta um relatório completo para a diretoria: jogos e resultados, quanto cada atleta recebeu, luvas, orçamento previsto × realizado, caixa por categoria, pizzas/rifas/eventos, patrocínios e plantel. Toque em <b>Salvar PDF</b> e escolha "Salvar como PDF". Não mostra CPF nem data de nascimento.</li>
       <li><b>Simular contratações:</b> fica na aba <b>Plantel</b>. Marque jogadores do Radar e veja o impacto antes de decidir.</li>
       <li><b>Orçamento da temporada:</b> preencha quanto espera gastar (uniformes, inscrição, material…) e arrecadar (patrocínio, pizzas, rifas…). Os gastos com atletas são automáticos. O <b>realizado</b> vem sozinho do Caixa.</li>
@@ -2882,12 +2897,17 @@ function gsSnapDoc(path) {
   const v = (GSS.data[col] || {})[id];
   return { id, exists: !!v, data: () => (v ? gsClone(v) : undefined), metadata: { fromCache: false, hasPendingWrites: false } };
 }
-function gsEmit() { GSS.ls.slice().forEach(l => { try { l.cb(l.t === "c" ? gsSnapCol(l.p) : gsSnapDoc(l.p)); } catch (e) { console.error(e); } }); }
+// Temporada encerrada aberta para consulta: enquanto ARQ.ano estiver marcado, a tela mostra a cópia
+// guardada daquele ano e os dados atuais não são desenhados por cima (continuam guardados em GSS.data).
+const ARQ = { ano: null, ro: false };
+function gsEmit() {
+  if (ARQ.ano) return; GSS.ls.slice().forEach(l => { try { l.cb(l.t === "c" ? gsSnapCol(l.p) : gsSnapDoc(l.p)); } catch (e) { console.error(e); } }); }
 async function gsLoad() {
   const d = JSON.parse(await gsCall("api_carregar"));
   if (d.marca) { try { localStorage.setItem(MARCA_KEY, d.marca); } catch {} }
   GSS.ver = d.versao;
   GSS.url = d.urlApp || "";
+  GSS.temporadas = Array.isArray(d.temporadas) ? d.temporadas.map(String) : [];
   GSS.data = { radar: d.radar || {}, plantel: d.plantel || {}, sigilo: d.sigilo || {}, config: d.config || {},
     jogos: d.jogos || {}, caixa: d.caixa || {}, acoes: d.acoes || {}, equipe: d.equipe || {}, log: d.log || {}, patrocinios: d.patrocinios || {}, planos: d.planos || {} };
   FILA.itens.forEach(aplicarItemLocal);
@@ -3884,14 +3904,16 @@ const espacosDe = area => {
 const nomeEspaco = (area, id) => (espacosDe(area).find(e => e.id === id) || {}).nome || "";
 const recebidoPat = id => caixaReal().filter(l => l.tipo === "entrada" && l.patrocinioId === id).reduce((s, l) => s + num(l.valor), 0);
 const rotuloPat = c => `${(AREA_PAT[c.area] || {}).l || ""}${c.espaco && nomeEspaco(c.area, c.espaco) ? ` · ${nomeEspaco(c.area, c.espaco)}` : ""}`;
+// Patrocinador "para renovar" (depois de encerrar a temporada): o valor é só a proposta, fora das contas até fechar
 function resumoPatrocinios() {
-  const P = state.patrocinios;
+  const P = state.patrocinios.filter(c => !c.renovar), R = state.patrocinios.filter(c => c.renovar);
   const combinado = P.reduce((s, c) => s + num(c.valor), 0);
-  const recebido = P.reduce((s, c) => s + recebidoPat(c.id), 0);
+  const recebido = state.patrocinios.reduce((s, c) => s + recebidoPat(c.id), 0);
   const falta = P.reduce((s, c) => s + Math.max(0, num(c.valor) - recebidoPat(c.id)), 0);
+  const nRenovar = R.length, proposta = R.reduce((s, c) => s + num(c.valor), 0);
   let total = 0, livres = 0;
   AREAS_PAT.filter(a => a.espacos).forEach(a => espacosDe(a.v).forEach(e => { total++; if (!P.some(c => c.area === a.v && c.espaco === e.id)) livres++; }));
-  return { n: P.length, combinado, recebido, falta, total, livres };
+  return { n: P.length, combinado, recebido, falta, total, livres, nRenovar, proposta };
 }
 function cartaoPat(c) {
   const rec = recebidoPat(c.id), val = num(c.valor), pct = val > 0 ? Math.min(100, Math.round(rec / val * 100)) : 0;
@@ -3899,14 +3921,15 @@ function cartaoPat(c) {
     ${c.espaco ? `<span class="num">${esc(nomeEspaco(c.area, c.espaco) || "Espaço removido").toUpperCase()}</span>` : ""}
     <span class="nm">${esc(c.nome)}</span>
     ${c.combinado ? `<span class="meta pat-nota">${esc(c.combinado)}</span>` : ""}
-    ${val > 0 ? `<span class="money">${money(val)}</span><span class="pat-bar"><i style="width:${pct}%"></i></span>
+    ${c.renovar ? `<span class="tag warn pat-renovar">Para renovar</span>${val > 0 ? `<span class="money">${money(val)}</span><span class="meta">Proposta de renovação${num(c.valorAnterior) > 0 ? `: +25% sobre ${money(c.valorAnterior)} de ${esc(c.anoAnterior || "")}` : ""}</span>` : ""}`
+    : val > 0 ? `<span class="money">${money(val)}</span><span class="pat-bar"><i style="width:${pct}%"></i></span>
       <span class="meta">${rec >= val - 0.004 ? "✓ Tudo recebido" : `Recebido ${money(rec)} · falta ${money(val - rec)}`}</span>${(() => { const pa = parcelasAbertas(c.parcelas, rec)[0]; return pa && pa.data ? `<span class="meta">Próxima parcela: ${money(pa.falta)} em ${dataBR(pa.data)}</span>` : ""; })()}` : `<span class="meta">Valor não informado</span>`}
   </button>`;
 }
 function renderPatrocinios() {
   const r = resumoPatrocinios();
   $("#pat-kpis").innerHTML = `
-    <div class="kpi hero"><div class="lbl">Combinado na temporada</div><div class="val">${money(r.combinado)}</div><div class="foot">${r.n} patrocínio${r.n === 1 ? "" : "s"} cadastrado${r.n === 1 ? "" : "s"}</div></div>
+    <div class="kpi hero"><div class="lbl">Combinado na temporada</div><div class="val">${money(r.combinado)}</div><div class="foot">${r.n} patrocínio${r.n === 1 ? "" : "s"} fechado${r.n === 1 ? "" : "s"}${r.nRenovar ? ` · ${r.nRenovar} para renovar (propostas somam ${money(r.proposta)})` : ""}</div></div>
     <div class="kpi"><div class="lbl">Já recebido</div><div class="val" style="color:var(--good)">${money(r.recebido)}</div><div class="foot">entradas no Caixa ligadas ao patrocinador</div></div>
     <div class="kpi ${r.falta > 0.004 ? "alert" : ""}"><div class="lbl">Falta receber</div><div class="val">${money(r.falta)}</div><div class="foot">${r.falta > 0.004 ? "combinado e ainda não pago" : "tudo em dia"}</div></div>
     <div class="kpi"><div class="lbl">Espaços livres nos uniformes</div><div class="val">${r.livres} de ${r.total}</div><div class="foot">espaços para vender</div></div>`;
@@ -3941,7 +3964,9 @@ function openPatrocinio(c = {}, opts = {}) {
       <div class="grid2">
         <div class="f full" style="grid-column:1/-1"><label for="pt-nome">Patrocinador (empresa ou pessoa)</label><input class="input" id="pt-nome" name="nome" value="${esc(c.nome || "")}" placeholder="Ex.: Mercado X"></div>
         ${A.espacos ? `<div class="f"><label for="pt-espaco">Espaço no ${A.l.toLowerCase()}</label><select class="select" id="pt-espaco" name="espaco">${livres.map(e => `<option value="${esc(e.id)}" ${e.id === espaco ? "selected" : ""}>${esc(e.nome)}</option>`).join("")}</select></div>` : ""}
-        ${moneyField("valor", "Valor combinado (temporada)", c.valor)}
+        ${moneyField("valor", c.renovar ? "Valor da proposta de renovação" : "Valor combinado (temporada)", c.valor)}
+        ${c.renovar ? `<div class="f full" style="grid-column:1/-1"><label for="pt-renovar" style="display:flex;gap:8px;align-items:center;font-weight:700"><input type="checkbox" name="renovar" id="pt-renovar" checked> Renovação ainda em negociação</label>
+          <span class="hint">${num(c.valorAnterior) > 0 ? `Em ${esc(c.anoAnterior || "")} o combinado foi ${money(c.valorAnterior)}; a proposta é 25% maior. ` : ""}Enquanto estiver marcado, o valor não entra nas contas. Quando fechar, ajuste o valor e desmarque.</span></div>` : ""}
         ${contatoField(c)}
         <div class="f full" style="grid-column:1/-1"><span class="lab">Parcelas com data (opcional)</span>
           <div class="parc-rows">${(c.parcelas || []).map(parcelaRow).join("")}</div>
@@ -3961,6 +3986,7 @@ function openPatrocinio(c = {}, opts = {}) {
     e.preventDefault();
     const v = n => String(form.querySelector(`[name="${n}"]`)?.value ?? "").trim();
     const d = { nome: v("nome").replace(/\s+/g, " "), area, espaco: A.espacos ? v("espaco") : "", valor: num(v("valor")), contato: telFormat(v("contato")), combinado: v("combinado"), parcelas: readParcelas(form) };
+    if (c.renovar) { d.renovar = !!form.querySelector('[name="renovar"]')?.checked; d.valorAnterior = c.valorAnterior || 0; d.anoAnterior = c.anoAnterior || ""; }
     const al = $("#form-alert");
     const somaP = d.parcelas.reduce((s, x) => s + x.valor, 0);
     if (somaP > d.valor + 0.004) { al.textContent = `As parcelas somam ${money(somaP)}, mais que o valor combinado (${money(d.valor)}).`; al.classList.remove("hidden"); return; }
@@ -4066,7 +4092,7 @@ function relatorioHTML() {
   const placar = j => temPlacar(j) ? `${num(j.placarNos)} × ${num(j.placarEles)}` : "—";
   const res = j => !temPlacar(j) ? "" : num(j.placarNos) > num(j.placarEles) ? "V" : num(j.placarNos) < num(j.placarEles) ? "D" : "E";
   return `<div class="rel-pag">
-    <header class="rel-capa"><img src="${$(".crest").src}" alt=""><div><h1>AMDC FC · Relatório da temporada 2027</h1>
+    <header class="rel-capa"><img src="${$(".crest").src}" alt=""><div><h1>AMDC FC · Relatório da temporada ${ANO()}</h1>
       <p>Gerado em ${agora.toLocaleDateString("pt-BR")} às ${agora.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}${state.usuario ? ` por ${esc(state.usuario)}` : ""} · uso interno da diretoria</p></div></header>
 
     <h2>1. Resumo</h2>
@@ -4115,7 +4141,7 @@ function relatorioHTML() {
     ${tab([["Atleta"], ["Posição"], ["Origem"], ["Custo por jogo", "n"], ["Liga"]],
       [...state.plantel].sort((a, b) => String(a.nome).localeCompare(b.nome, "pt-BR")).map(p => `<tr><td>${esc(p.nome)}</td><td>${esc(p.posicao || "")}</td><td>${p.origem === "fora" ? "De fora" : "Sertãozinho"}</td>${n(custoJogo(p))}<td>${aptoAtleta(p).ok ? "Apto" : "Pendente"}</td></tr>`))}
 
-    <footer class="rel-rodape">AMDC FC · Gestão 2027 · documento interno da diretoria. Não contém CPF nem data de nascimento dos atletas.</footer>
+    <footer class="rel-rodape">AMDC FC · Gestão ${ANO()} · documento interno da diretoria. Não contém CPF nem data de nascimento dos atletas.</footer>
   </div>`;
 }
 function abrirRelatorio() {
@@ -4540,7 +4566,100 @@ function renderFinGeral() {
         </div>
         <p class="hint" style="margin:10px 0 0">A média real inclui os bônus por gol e por acontecimento pagos nas folhas.</p>
       </div>
-    </div>`;
+    </div>
+    ${blocoTemporada()}`;
+}
+
+/* ---------- Fim da temporada: encerrar e consultar as anteriores ---------- */
+function blocoTemporada() {
+  if (PLATAFORMA !== "google") return "";
+  const anos = (GSS.temporadas || []).filter(a => a !== ARQ.ano).sort().reverse();
+  const antigas = anos.length ? `<div class="temp-antigas"><span>Temporadas anteriores:</span>${anos.map(a => `<button class="btn sm" data-act="temp-abrir" data-ano="${esc(a)}">📁 ${esc(a)}</button>`).join("")}</div>` : "";
+  if (ARQ.ano) return `<div class="panel temp-fim" id="temp-fim"><h3>Temporada ${esc(ARQ.ano)} · encerrada</h3><p class="hint" style="margin:0 0 10px">Você está consultando uma temporada que já terminou.</p>
+    <button class="btn primary" data-act="temp-voltar">Voltar para a temporada atual</button>${antigas}</div>`;
+  return `<div class="panel temp-fim" id="temp-fim"><h3>Fim da temporada ${esc(ANO())}</h3>
+    <p class="hint" style="margin:0 0 10px">Depois do campeonato, com todos os atletas pagos, encerre a temporada. A plataforma guarda uma cópia completa de ${esc(ANO())} para consulta e começa ${Number(ANO()) + 1} com o plantel, o radar, a equipe, os patrocinadores (proposta 25% maior) e o saldo do caixa.</p>
+    <button class="btn danger edit-only" data-act="temp-encerrar">Encerrar a temporada ${esc(ANO())}</button>${antigas}</div>`;
+}
+async function abrirTemporada(ano) {
+  let d;
+  try { d = JSON.parse(await gsCallT(60000, "api_temporada", String(ano))); }
+  catch (e) { toast(e && e.code === "rede" ? "Sem internet agora. Tente de novo." : "Não foi possível abrir a temporada " + ano + ".", "bad"); return; }
+  if (!ARQ.ano) ARQ.ro = state.readOnly;
+  ARQ.ano = String(ano); state.readOnly = true;
+  ["radar", "plantel", ...COLECOES_EXTRA].forEach(col => { const o = d[col] || {}; state[col] = Object.keys(o).sort().map(id => ({ id, ...o[id] })); });
+  const cfg = d.config || {};
+  state.config = normConfig(Object.assign({}, cfg.geral, { temporada: String(ano) }));
+  state.ligaCfg = cfg.liga || {}; state.finCfg = cfg.financeiro || {}; state.patCfg = cfg.patrocinio || {}; state.sigilo = {};
+  state.jogoOpen = null; state.acaoOpen = null; state.compare = []; state.cmpOpen = false;
+  closeModal(); renderAll(); window.scrollTo(0, 0);
+  toast("Temporada " + ano + " aberta só para consulta", "good");
+}
+function voltarTemporadaAtual() {
+  if (!ARQ.ano) return;
+  ARQ.ano = null; state.readOnly = ARQ.ro;
+  state.jogoOpen = null; state.acaoOpen = null; state.compare = []; state.cmpOpen = false;
+  closeModal(); gsEmit(); renderAll(); window.scrollTo(0, 0);
+}
+// Monta o que muda nos cadastros para a próxima temporada. O servidor arquiva e apaga o resto sob a trava.
+function pedidoEncerrar() {
+  const ano = ANO(), agora = new Date().toISOString(), rc = resumoCaixa();
+  const patches = [], novos = [];
+  state.plantel.forEach(p => {
+    const a = num(p.assinatura); if (!a) return;
+    const pago = luvasPagoValor(p), falta = Math.max(0, Math.round((a - pago) * 100) / 100);
+    // O que ficou faltando de luvas continua devido; o que já foi pago fica guardado em ${ano}
+    patches.push({ col: "plantel", id: p.id, patch: { assinatura: falta, luvasStatus: falta > 0.004 && p.luvasStatus !== "pago" ? (p.luvasStatus || "") : "",
+      luvasParcelas: parcelasAbertas(p.luvasParcelas, pago).map(x => ({ valor: x.falta, data: x.data })), luvasAnterior: { ano, combinado: a, pago } } });
+  });
+  state.patrocinios.forEach(c => {
+    const ant = c.renovar ? num(c.valorAnterior) : num(c.valor);
+    patches.push({ col: "patrocinios", id: c.id, patch: { valor: Math.round(ant * 1.25), parcelas: [], renovar: true, valorAnterior: ant, anoAnterior: ano } });
+  });
+  const saldo = Math.round(rc.saldo * 100) / 100;
+  if (Math.abs(saldo) > 0.004) novos.push({ col: "caixa", id: newId("caixa"), doc: { tipo: saldo > 0 ? "entrada" : "saida", categoria: saldo > 0 ? "Saldo inicial" : "Outras saídas",
+    valor: Math.abs(saldo), data: hojeISO(), forma: "", descricao: saldo > 0 ? `Saldo final da temporada ${ano}` : `Saldo negativo da temporada ${ano}`,
+    atletaId: "", acaoId: "", patrocinioId: "", jogoId: "", aPagar: false, criadoEm: agora, atualizadoEm: agora, por: state.usuario || "" } });
+  return { ano, patches, novos, quem: state.usuario || "", saldo };
+}
+async function encerrarTemporada() {
+  if (state.readOnly || ARQ.ano) { toast("Acesso somente leitura", "bad"); return; }
+  if (FILA.itens.length) { toast("Espere as alterações guardadas sem internet serem enviadas.", "bad"); return; }
+  const ano = ANO(), prox = Number(ano) + 1, rc = resumoCaixa(), rj = resumoJogos();
+  if (rc.folhas.length) {
+    openModal(`<div class="modal small"><div class="modal-head"><div><h3>Ainda há atletas sem pagamento</h3></div><button type="button" class="x" data-act="close" aria-label="Fechar">✕</button></div>
+      <div class="modal-body"><p>Antes de encerrar ${esc(ano)}, pague ou acerte a folha destes jogos:</p><ul>${rc.folhas.map(x => `<li>${esc(rotuloJogo(x.j))}${x.j.adversario ? ` vs ${esc(x.j.adversario)}` : ""}: falta ${money(x.f.pendente)}</li>`).join("")}</ul></div>
+      <div class="modal-foot"><span class="spacer"></span><button class="btn primary" data-act="close">Entendi</button></div></div>`);
+    return;
+  }
+  const p = pedidoEncerrar();
+  const semPlacar = rj.total - rj.realizados;
+  const ok1 = await confirmBox({ title: `Encerrar a temporada ${ano}?`, ok: "Continuar", text: `
+    <p><b>Fica guardado em ${esc(ano)}</b> (para consultar depois): jogos, folhas, pagamentos, lançamentos do caixa e o histórico.</p>
+    <p><b>Passa para ${prox}:</b> o plantel, o radar, a equipe e as contas a pagar em aberto.</p>
+    <ul style="margin:6px 0 0 18px;padding:0">
+      <li>Saldo do caixa: ${p.saldo >= 0 ? `${money(p.saldo)} entra como "Saldo inicial"` : `${money(-p.saldo)} negativo entra como saída`}.</li>
+      <li>${state.patrocinios.length} patrocinador${state.patrocinios.length === 1 ? "" : "es"} volta${state.patrocinios.length === 1 ? "" : "m"} "para renovar", com proposta 25% maior.</li>
+      ${rc.luvasTotal > 0.004 ? `<li>Luvas que faltam pagar (${money(rc.luvasTotal)}) continuam devidas.</li>` : ""}
+    </ul>
+    ${semPlacar > 0 ? `<p class="form-alert" style="margin-top:10px">Atenção: ${semPlacar} jogo${semPlacar === 1 ? "" : "s"} ainda sem placar nem presença. Se o campeonato não acabou, cancele.</p>` : ""}` });
+  if (!ok1) return;
+  const ok2 = await confirmBox({ title: "Tem certeza?", ok: `Sim, encerrar ${ano}`, text: `<p>Isso não pode ser desfeito pelo app. Antes, a plataforma faz uma cópia de segurança. Depois, ${esc(ano)} fica só para consulta, no fim da Visão geral do Financeiro.</p>` });
+  if (!ok2) return;
+  toast("Encerrando a temporada… não feche a página", "");
+  try {
+    await gsCallT(120000, "api_encerrar_temporada", JSON.stringify({ ano: p.ano, patches: p.patches, novos: p.novos, quem: p.quem }));
+  } catch (e) {
+    const m = String((e && e.message) || "");
+    toast(/JA_ENCERRADA/.test(m) ? "Essa temporada já foi encerrada (talvez por outro diretor). Atualize a página."
+      : /FOLHAS_EM_ABERTO/.test(m) ? "Ainda há atletas presentes sem pagamento. Acerte as folhas antes."
+      : /FUNCAO_INVALIDA|not found|Script function|is not a function/i.test(m) ? "O servidor do Google ainda não tem essa função. O presidente precisa publicar a versão nova."
+      : e && e.code === "rede" ? "Sem internet. Nada foi alterado; tente de novo." : "Não foi possível encerrar a temporada. Nada foi alterado.", "bad");
+    return;
+  }
+  await gsLoad();
+  renderAll();
+  toast(`Temporada ${ano} encerrada. Bem-vindos a ${prox}!`, "good");
 }
 
 function blocoAgenda() {
@@ -4890,7 +5009,7 @@ function openPlayerForm(kind, p = {}, opts = {}) {
   const editing = !!p.id && !opts.fromRadarId;
   const saindo = opts.replaceId ? find("plantel", opts.replaceId) : null;
   const title = saindo ? "Efetivar troca" : opts.fromRadarId ? "Contratar atleta" : isPlantel ? (editing ? "Editar atleta" : "Cadastrar atleta") : (editing ? "Editar jogador do radar" : "Adicionar ao radar");
-  const sub = saindo ? `${firstLast(p.nome)} entra no lugar de ${firstLast(saindo.nome)}` : opts.fromRadarId ? "Complete os dados obrigatórios para levar o jogador ao plantel" : isPlantel ? "Plantel AMDC FC 2027" : "Jogador na mira, ainda não contratado";
+  const sub = saindo ? `${firstLast(p.nome)} entra no lugar de ${firstLast(saindo.nome)}` : opts.fromRadarId ? "Complete os dados obrigatórios para levar o jogador ao plantel" : isPlantel ? "Plantel AMDC FC " + ANO() : "Jogador na mira, ainda não contratado";
   const exceptId = editing ? p.id : (saindo ? saindo.id : null);
   const origemAtual = p.origem || opts.origem || (isPlantel ? "" : "indefinido");
 
@@ -5276,6 +5395,9 @@ document.addEventListener("click", async e => {
     if (state.tab !== "radar") setTab("radar"); else renderRadar();
     return;
   }
+  if (act === "temp-encerrar") return encerrarTemporada();
+  if (act === "temp-abrir") return abrirTemporada(el.dataset.ano);
+  if (act === "temp-voltar") return voltarTemporadaAtual();
   if (act === "config") { if (state.readOnly) { toast("Acesso somente leitura", "bad"); return; } return openConfig(); }
   if (act === "config-reset") {
     const f = $("#config-form");

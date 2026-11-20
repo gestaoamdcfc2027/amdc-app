@@ -1,6 +1,6 @@
 // App do AMDC: guarda a tela no celular para abrir rápido e mesmo com sinal ruim.
 // Os DADOS não ficam aqui: vêm sempre do Google (com a senha). Só arquivos deste site são guardados.
-const CACHE = "amdc-bb9c2d10ad";
+const CACHE = "amdc-9ffaaa92f8";
 const ARQUIVOS = ["./", "./index.html", "./confirmar.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png"];
 
 self.addEventListener("install", e => {
