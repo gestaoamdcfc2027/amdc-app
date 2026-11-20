@@ -313,6 +313,11 @@ textarea.input{height:auto;min-height:70px;padding:10px 12px;resize:vertical}
 .f.invalid .input,.f.invalid .select{border-color:var(--bad)}
 .bonus-rows{display:flex;flex-direction:column;gap:8px}
 .bonus-row{display:grid;grid-template-columns:1fr 140px 160px 38px;gap:8px}
+.parc-rows{display:grid;gap:8px}
+.parc-row{display:grid;grid-template-columns:150px 170px 38px;gap:8px}
+.agenda .it.atraso .v{color:var(--bad)}
+.agenda .quando{font-size:12px;font-weight:700;color:var(--muted);min-width:52px}
+.agenda .it.atraso .quando{color:var(--bad)}
 .bonus-row .x{height:42px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--bad);font-size:18px}
 .hint{font-size:12.5px;color:var(--muted)}
 .conf-resumo{display:flex;flex-wrap:wrap;gap:6px}
@@ -497,6 +502,10 @@ textarea.summary{width:100%;min-height:340px;font-family:ui-monospace,SFMono-Reg
 .linhas{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
 .linhas span{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;font-weight:600}
 .linhas b{font-family:"Barlow Condensed";font-size:21px;font-variant-numeric:tabular-nums}
+.linhas.conta{grid-template-columns:1fr;gap:0}
+.linhas.conta>div{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:6px 0;border-bottom:1px solid var(--line)}
+.linhas.conta span{text-transform:none;letter-spacing:0;font-size:14px;color:var(--ink)}
+.linhas.conta b{font-size:19px;white-space:nowrap}
 .cen-pick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;align-items:stretch}
 .cen-pick>span{grid-column:1/-1;font-size:14px;color:var(--muted);font-weight:600}
 .cen-pick .cen{text-align:left;cursor:pointer;border:2px solid transparent;border-top:4px solid var(--royal-soft)}
@@ -837,6 +846,7 @@ body.readonly .slot.empty{pointer-events:none;opacity:.7}
   .kpi .val{font-size:23px}
   .kpi .foot{font-size:12px}
   .bonus-row{grid-template-columns:1fr 110px 38px}
+  .parc-row{grid-template-columns:1fr 1fr 38px}
   .bonus-row .select{grid-column:1/3}
   .cards{grid-template-columns:1fr}
   .slots{grid-template-columns:repeat(2,1fr)}
@@ -969,10 +979,11 @@ body.readonly .slot.empty{pointer-events:none;opacity:.7}
       <button class="btn edit-only" data-act="lanc-novo" data-tipo="saida">＋ Saída</button>
       <button class="btn edit-only" data-act="acao-nova">＋ Pizza, rifa ou evento</button>
       <button class="btn edit-only" data-act="luvas-pagar">Registrar pagamento de luvas</button>
+      <button class="btn edit-only" data-act="lanc-novo" data-tipo="saida" data-apagar="1">＋ Conta a pagar</button>
     </div>
     <div class="section-title"><div><h2>Pizzas, rifas e eventos</h2><div class="sub">Cada ação mostra quanto arrecadou, quanto gastou e o lucro.</div></div></div>
     <div id="caixa-acoes"></div>
-    <div class="section-title"><div><h2>Contas a pagar</h2><div class="sub">Folhas de jogos ainda não pagas e luvas que faltam pagar.</div></div></div>
+    <div class="section-title"><div><h2>Contas a pagar</h2><div class="sub">Folhas de jogos ainda não pagas, luvas que faltam pagar e contas com vencimento (fornecedores, liga, festa).</div></div></div>
     <div id="caixa-apagar"></div>
     <div class="section-title"><div><h2>Extrato</h2><div class="sub">Toque num lançamento para editar. Pagamentos de jogos abrem a folha do jogo.</div></div>
       <div class="toolbar"><select class="select" id="cx-mes" aria-label="Filtrar por mês"><option value="">Todos os meses</option></select><select class="select" id="cx-tipo" aria-label="Filtrar por tipo"><option value="">Entradas e saídas</option><option value="entrada">Só entradas</option><option value="saida">Só saídas</option></select></div></div>
@@ -1238,11 +1249,22 @@ const bonusFixo = p => (p.bonus || []).filter(b => tipoBonus(b) === "unico").red
 const bonusVar = p => (p.bonus || []).filter(b => tipoBonus(b) !== "unico");
 const bonusTotal = bonusFixo;
 const entrada = p => num(p.assinatura) + bonusFixo(p);
+// Conta a pagar = lançamento de saída com "aPagar": ainda não saiu do caixa, então fica fora de todas as somas
+const caixaReal = () => state.caixa.filter(l => !l.aPagar);
+const contasAPagar = () => state.caixa.filter(l => l.aPagar);
+// Parcelas com data (luvas e patrocínio): o que já foi pago ou recebido quita as parcelas da mais antiga para a mais nova
+function parcelasAbertas(parcelas, quitado) {
+  let resto = num(quitado);
+  return (Array.isArray(parcelas) ? parcelas : []).filter(x => num(x.valor) > 0)
+    .slice().sort((a, b) => String(a.data || "9999").localeCompare(String(b.data || "9999")))
+    .map(x => { const usado = Math.min(resto, num(x.valor)); resto -= usado; return { valor: num(x.valor), data: x.data || "", falta: num(x.valor) - usado }; })
+    .filter(x => x.falta > 0.004);
+}
 // Luvas: pagas por inteiro (marcado no cadastro) ou somando os pagamentos lançados no Caixa
 const luvasPagoValor = p => {
   const a = num(p.assinatura); if (!a) return 0;
   if (p.luvasStatus === "pago") return a;
-  const pago = state.caixa.filter(l => l.tipo === "saida" && l.categoria === "Luvas" && l.atletaId === p.id).reduce((s, l) => s + num(l.valor), 0);
+  const pago = caixaReal().filter(l => l.tipo === "saida" && l.categoria === "Luvas" && l.atletaId === p.id).reduce((s, l) => s + num(l.valor), 0);
   return Math.min(a, pago);
 };
 const luvasPagas = p => num(p.assinatura) > 0 && luvasPagoValor(p) >= num(p.assinatura) - 0.004;
@@ -2649,6 +2671,8 @@ const getHelp = () => [
     <p>A aba tem quatro partes (botões no topo da aba):</p>
     <ol>
       <li><b>Visão geral:</b> responde "a conta da temporada fecha?". Mostra o resultado previsto, o saldo do caixa, o que falta pagar e o custo do elenco.</li>
+      <li><b>Saldo previsto até o fim:</b> caixa de hoje + patrocínio a receber − tudo o que ainda falta pagar até o fim do cenário escolhido (folhas, luvas, bônus garantidos, contas e o que sobra do orçamento). A folha dos próximos jogos usa o planejado até o 3º jogo e, depois, a média real. Bônus "só se acontecer" ficam numa linha à parte.</li>
+      <li><b>Próximos 30 dias:</b> o que vence e o que entra no próximo mês: parcelas de luvas, parcelas de patrocínio, contas a pagar e a folha prevista dos jogos com data. O que passou da data aparece como <b>atrasado</b>.</li>
       <li><b>Planejamento do elenco:</b> para o pré-campeonato. Escolha o <b>cenário</b> (até onde o time vai) e veja o custo por jogo, o total da temporada, a média por jogador, o teto, para onde vai o dinheiro e o valor de cada atleta.</li>
       <li><b>📄 Relatório da temporada:</b> botão no topo do Financeiro. Monta um relatório completo para a diretoria: jogos e resultados, quanto cada atleta recebeu, luvas, orçamento previsto × realizado, caixa por categoria, pizzas/rifas/eventos, patrocínios e plantel. Toque em <b>Salvar PDF</b> e escolha "Salvar como PDF". Não mostra CPF nem data de nascimento.</li>
       <li><b>Simular contratações:</b> fica na aba <b>Plantel</b>. Marque jogadores do Radar e veja o impacto antes de decidir.</li>
@@ -2662,7 +2686,9 @@ const getHelp = () => [
       <li><b>Pizza, rifa ou evento:</b> crie a ação e lance o que foi vendido e o que foi gasto. A plataforma mostra o <b>lucro</b> de cada uma.</li>
       <li><b>Pagamentos dos jogos</b> entram no extrato sozinhos (um lançamento por jogo), a partir da folha.</li>
       <li><b>Luvas:</b> são pagas conforme o combinado com cada atleta. Registre cada parcela em <b>Registrar pagamento de luvas</b>; o Plantel mostra quanto já foi pago.</li>
-      <li><b>A pagar</b> junta as folhas em aberto e as luvas que faltam.</li>
+      <li><b>A pagar</b> junta as folhas em aberto, as luvas que faltam e as <b>contas a pagar</b>.</li>
+      <li><b>＋ Conta a pagar:</b> um gasto combinado que ainda não foi pago (uniformes, inscrição, festa), com a data de vencimento. Ele não mexe no saldo até alguém tocar em <b>Pago</b>.</li>
+      <li><b>De qual jogo?</b> Ao lançar uma saída (água, campo, torcida, festa), escolha o jogo. O jogo passa a mostrar o <b>custo real</b>: folha dos atletas + esses gastos.</li>
     </ul>
     <div class="hl">Comece lançando o <b>Saldo inicial</b> (o dinheiro que o clube já tem hoje) como uma entrada.</div>` },
   { id: "patrocinios", ic: "🤝", t: "Patrocínios", h: `
@@ -3315,6 +3341,8 @@ function openJogo(id) {
         <div id="jg-pres"></div></div>
       <div class="sec-modal"><h4>4. Folha de pagamento <span style="display:flex;gap:6px"><button class="btn sm" data-act="folha-whats">💬 Folha para o WhatsApp</button></span></h4>
         <div id="jg-folha"></div></div>
+      <div class="sec-modal"><h4>5. Custo real do jogo <button class="btn sm edit-only" data-act="lanc-novo" data-tipo="saida" data-jogo="${esc(id)}">＋ Gasto deste jogo</button></h4>
+        <div id="jg-custo"></div></div>
     </div>
     <div class="modal-foot"><button class="btn danger edit-only" data-act="jogo-excluir">Excluir jogo</button><span class="spacer"></span><button class="btn primary" data-act="close">Fechar</button></div>
   </div>`);
@@ -3339,6 +3367,7 @@ function renderJogoModal() {
   $("#jg-titulo").textContent = `${rotuloJogo(j)} · ${j.mando === "fora" ? "@ " : "vs "}${j.adversario || "adversário a definir"}`;
   $("#jg-sub").textContent = `${FASES[j.fase]} · ${dataJogoBR(j)}${j.local ? ` · ${j.local}` : ""}`;
   renderConfirmacao(j);
+  renderCustoJogo(j);
   const pres = new Set(j.presentes || []), pg = j.pagamentos || {};
   const atletas = [...state.plantel].sort((a, b) => (POSICOES.indexOf(a.posicao) - POSICOES.indexOf(b.posicao)) || String(a.nome).localeCompare(b.nome, "pt-BR"));
   $("#jg-pres").innerHTML = atletas.length ? `<div class="pres">${atletas.map(p => {
@@ -3363,6 +3392,20 @@ function renderJogoModal() {
     }).join("")}
   </tbody><tfoot><tr><td colspan="4">Total da folha (${fo.linhas.length} atleta${fo.linhas.length === 1 ? "" : "s"})</td><td class="num">${money(fo.total)}</td><td class="num">${fo.pendente > 0.004 ? `<span class="sai">${money(fo.pendente)} a pagar</span>` : `<span class="ent">✓ Tudo pago</span>`}</td></tr></tfoot></table></div>
   <p class="hint" style="margin-top:8px">O valor de cada atleta fica <b>guardado no momento do pagamento</b>: se o contrato mudar depois, a folha deste jogo não muda. Os pagamentos entram automaticamente no Caixa.</p>`;
+}
+// Custo real do jogo = folha dos atletas + gastos do Caixa ligados ao jogo (água, campo, torcida, festa…)
+function custoRealJogo(j) {
+  const fo = folhaJogo(j);
+  const gastos = state.caixa.filter(l => l.tipo === "saida" && l.jogoId === j.id).sort((a, b) => String(a.data || "").localeCompare(String(b.data || "")));
+  const outros = gastos.reduce((s, l) => s + num(l.valor), 0);
+  return { fo, gastos, outros, total: fo.total + outros };
+}
+function renderCustoJogo(j) {
+  const box = $("#jg-custo"); if (!box) return;
+  const c = custoRealJogo(j);
+  box.innerHTML = `<div class="calc"><div><span>Folha dos atletas</span><b>${money(c.fo.total)}</b></div><div><span>Outros gastos</span><b>${money(c.outros)}</b></div><div><span>Custo real do jogo</span><b>${money(c.total)}</b></div></div>
+    ${c.gastos.length ? `<div class="lista" style="margin-top:10px">${c.gastos.map(l => `<div class="it" data-act="lanc-editar" data-id="${esc(l.id)}" style="cursor:pointer"><div class="tx"><b>${esc(l.descricao || l.categoria)}</b><small>${esc(l.categoria)} · ${l.aPagar ? `conta a pagar${l.data ? ` (vence ${dataBR(l.data)})` : ""}` : l.data ? dataBR(l.data) : "sem data"}</small></div><span class="v sai">${money(l.valor)}</span></div>`).join("")}</div>`
+      : `<p class="hint" style="margin-top:8px">Nenhum outro gasto ligado a este jogo. Use <b>＋ Gasto deste jogo</b> para lançar água, campo, torcida ou festa. Ao lançar uma saída no Caixa, também dá para escolher o jogo.</p>`}`;
 }
 let extraTimer = null;
 async function setExtra(id, bonus, qtd) {
@@ -3418,7 +3461,7 @@ const CAT_DA_ACAO = { pizza: "Venda de pizzas", rifa: "Rifa", evento: "Evento", 
 const hojeBR = () => hojeISO();
 // Extrato: lançamentos manuais + pagamentos dos jogos (gerados das folhas, um por jogo)
 function extrato() {
-  const L = state.caixa.map(l => ({ ...l, manual: true }));
+  const L = caixaReal().map(l => ({ ...l, manual: true }));
   state.jogos.forEach(j => {
     const pg = Object.values(j.pagamentos || {});
     if (!pg.length) return;
@@ -3435,10 +3478,12 @@ function resumoCaixa() {
   const rj = resumoJogos();
   const luvasFalta = state.plantel.map(p => ({ p, falta: Math.max(0, num(p.assinatura) - luvasPagoValor(p)) })).filter(x => x.falta > 0.004);
   const luvasTotal = luvasFalta.reduce((s, x) => s + x.falta, 0);
-  return { E, entradas, saidas, saldo: entradas - saidas, folhas: rj.pendentes, folhasTotal: rj.pendente, luvasFalta, luvasTotal, aPagar: rj.pendente + luvasTotal };
+  const contas = contasAPagar().sort((a, b) => String(a.data || "9999").localeCompare(String(b.data || "9999")));
+  const contasTotal = contas.reduce((s, l) => s + num(l.valor), 0);
+  return { E, entradas, saidas, saldo: entradas - saidas, folhas: rj.pendentes, folhasTotal: rj.pendente, luvasFalta, luvasTotal, contas, contasTotal, aPagar: rj.pendente + luvasTotal + contasTotal };
 }
 function resumoAcao(a) {
-  const ls = state.caixa.filter(l => l.acaoId === a.id);
+  const ls = caixaReal().filter(l => l.acaoId === a.id);
   const arrec = ls.filter(l => l.tipo === "entrada").reduce((s, l) => s + num(l.valor), 0);
   const gasto = ls.filter(l => l.tipo === "saida").reduce((s, l) => s + num(l.valor), 0);
   return { ls, arrec, gasto, lucro: arrec - gasto };
@@ -3449,7 +3494,7 @@ function renderCaixa() {
     <div class="kpi hero"><div class="lbl">Saldo do clube</div><div class="val">${money(r.saldo)}</div><div class="foot">entradas − saídas registradas</div></div>
     <div class="kpi"><div class="lbl">Entradas</div><div class="val" style="color:var(--good)">${money(r.entradas)}</div><div class="foot">patrocínio, pizzas, rifas, eventos…</div></div>
     <div class="kpi"><div class="lbl">Saídas</div><div class="val" style="color:var(--bad)">${money(r.saidas)}</div><div class="foot">inclui os pagamentos dos jogos</div></div>
-    <div class="kpi ${r.aPagar > 0.004 ? "alert" : ""}"><div class="lbl">A pagar</div><div class="val">${money(r.aPagar)}</div><div class="foot">${money(r.folhasTotal)} de jogos · ${money(r.luvasTotal)} de luvas</div></div>`;
+    <div class="kpi ${r.aPagar > 0.004 ? "alert" : ""}"><div class="lbl">A pagar</div><div class="val">${money(r.aPagar)}</div><div class="foot">${money(r.folhasTotal)} de jogos · ${money(r.luvasTotal)} de luvas${r.contasTotal > 0.004 ? ` · ${money(r.contasTotal)} de contas` : ""}</div></div>`;
 
   $("#caixa-acoes").innerHTML = state.acoes.length ? `<div class="acoes">${[...state.acoes].sort((a, b) => String(b.data || "").localeCompare(a.data || "")).map(a => {
     const ra = resumoAcao(a);
@@ -3461,9 +3506,11 @@ function renderCaixa() {
 
   const itens = [
     ...r.folhas.map(({ j, f }) => `<div class="it"><div class="tx"><b>${esc(rotuloJogo(j))}${j.adversario ? ` vs ${esc(j.adversario)}` : ""}</b><small>Folha de pagamento · ${f.linhas.filter(l => !l.pago).length} atleta(s) sem pagamento</small></div><span class="v sai">${money(f.pendente)}</span><button class="btn sm" data-act="jogo-abrir" data-id="${esc(j.id)}">Abrir folha</button></div>`),
-    ...r.luvasFalta.map(({ p, falta }) => `<div class="it"><div class="tx"><b>Luvas · ${esc(p.nome)}</b><small>${money(luvasPagoValor(p))} pagos de ${money(p.assinatura)} · pagas conforme combinado com o atleta</small></div><span class="v sai">${money(falta)}</span><button class="btn sm edit-only" data-act="luvas-pagar" data-id="${esc(p.id)}">Registrar pagamento</button></div>`),
+    ...r.contas.map(l => { const venc = l.data && l.data < hojeISO();
+      return `<div class="it" data-act="lanc-editar" data-id="${esc(l.id)}" style="cursor:pointer"><div class="tx"><b>${esc(l.descricao || l.categoria)}</b><small>${esc(l.categoria)} · ${l.data ? `${venc ? "venceu" : "vence"} em ${dataBR(l.data)}` : "sem data"}${l.jogoId && find("jogos", l.jogoId) ? ` · ${esc(rotuloJogo(find("jogos", l.jogoId)))}` : ""}</small></div><span class="v sai">${money(l.valor)}</span><button class="btn sm royal edit-only" data-act="conta-pagar" data-id="${esc(l.id)}">Pago</button></div>`; }),
+    ...r.luvasFalta.map(({ p, falta }) => `<div class="it"><div class="tx"><b>Luvas · ${esc(p.nome)}</b><small>${money(luvasPagoValor(p))} pagos de ${money(p.assinatura)} · ${(() => { const pa = parcelasAbertas(p.luvasParcelas, luvasPagoValor(p))[0]; return pa && pa.data ? `próxima parcela ${money(pa.falta)} em ${dataBR(pa.data)}` : "pagas conforme combinado com o atleta"; })()}</small></div><span class="v sai">${money(falta)}</span><button class="btn sm edit-only" data-act="luvas-pagar" data-id="${esc(p.id)}">Registrar pagamento</button></div>`),
   ];
-  $("#caixa-apagar").innerHTML = itens.length ? `<div class="lista">${itens.join("")}</div>` : `<div class="panel"><div class="empty-state"><b>Nada a pagar</b>Folhas e luvas em dia.</div></div>`;
+  $("#caixa-apagar").innerHTML = itens.length ? `<div class="lista">${itens.join("")}</div>` : `<div class="panel"><div class="empty-state"><b>Nada a pagar</b>Folhas, luvas e contas em dia.</div></div>`;
 
   // filtro de mês
   const meses = [...new Set(r.E.map(l => String(l.data || "").slice(0, 7)).filter(Boolean))].sort().reverse();
@@ -3483,21 +3530,26 @@ function renderCaixa() {
 function openLancamento(l = {}, opts = {}) {
   const tipo = l.tipo || opts.tipo || "entrada";
   const editando = !!l.id;
+  const aPagar = editando ? !!l.aPagar : !!opts.aPagar;
+  const jogoSel = l.jogoId || opts.jogoId || "";
+  const jogosOpc = [...state.jogos].sort(ordenarJogos);
   const cats = tipo === "entrada" ? CAT_ENTRADA : CAT_SAIDA;
   const cat = l.categoria || opts.categoria || (opts.acaoId ? (tipo === "entrada" ? CAT_DA_ACAO[(find("acoes", opts.acaoId) || {}).tipo] || "Outras entradas" : "Custo de pizza/rifa/evento") : cats[0]);
   openModal(`<form class="modal" id="lanc-form" novalidate>
-    <div class="modal-head"><div><h3>${editando ? "Editar lançamento" : tipo === "entrada" ? "Nova entrada" : "Nova saída"}</h3><p>Caixa do clube</p></div><button type="button" class="x" data-act="close" aria-label="Fechar">✕</button></div>
+    <div class="modal-head"><div><h3>${editando ? (aPagar ? "Editar conta a pagar" : "Editar lançamento") : aPagar ? "Nova conta a pagar" : tipo === "entrada" ? "Nova entrada" : "Nova saída"}</h3><p>Caixa do clube</p></div><button type="button" class="x" data-act="close" aria-label="Fechar">✕</button></div>
     <div class="modal-body">
       <div class="form-alert hidden" id="form-alert"></div>
       <div class="f" style="margin-bottom:12px"><span class="lab">Tipo</span>${seg("tipo", [{ value: "entrada", label: "Entrada (dinheiro que entrou)" }, { value: "saida", label: "Saída (dinheiro que saiu)" }], tipo)}</div>
+      <div class="f ${tipo === "saida" ? "" : "hidden"}" id="lc-sit-wrap" style="margin-bottom:12px"><span class="lab">Situação</span>${seg("situacao", [{ value: "pago", label: "Já foi pago" }, { value: "apagar", label: "Conta a pagar", sub: "ainda não saiu do caixa" }], aPagar ? "apagar" : "pago")}</div>
       <div class="grid2">
         ${moneyField("valor", "Valor", l.valor)}
-        <div class="f"><label for="lc-data">Data</label><input class="input" id="lc-data" name="data" type="date" value="${esc(l.data || hojeBR())}"></div>
+        <div class="f"><label for="lc-data" id="lc-data-lab">${aPagar ? "Vence em" : "Data"}</label><input class="input" id="lc-data" name="data" type="date" value="${esc(l.data || hojeBR())}"></div>
         <div class="f"><label for="lc-cat">Categoria</label><select class="select" id="lc-cat" name="categoria">${cats.map(c => `<option ${c === cat ? "selected" : ""}>${c}</option>`).join("")}</select></div>
         <div class="f"><label for="lc-forma">Forma</label><select class="select" id="lc-forma" name="forma">${["Pix", "Dinheiro", "Transferência", "Outra"].map(f => `<option ${f === (l.forma || "Pix") ? "selected" : ""}>${f}</option>`).join("")}</select></div>
         <div class="f full" style="grid-column:1/-1"><label for="lc-desc">Descrição</label><input class="input" id="lc-desc" name="descricao" value="${esc(l.descricao || "")}" placeholder="Ex.: Patrocínio Mercado X, 40 pizzas vendidas, inscrição na liga…"></div>
         <div class="f ${cat === "Luvas" ? "" : "hidden"}" id="lc-atleta-wrap"><label for="lc-atleta">Atleta</label><select class="select" id="lc-atleta" name="atletaId"><option value="">Selecione…</option>${[...state.plantel].sort((a, b) => String(a.nome).localeCompare(b.nome, "pt-BR")).map(p => `<option value="${esc(p.id)}" ${p.id === (l.atletaId || opts.atletaId) ? "selected" : ""}>${esc(p.nome)}${num(p.assinatura) ? ` — faltam ${money(Math.max(0, num(p.assinatura) - luvasPagoValor(p)))}` : ""}</option>`).join("")}</select></div>
         <div class="f ${cat === "Patrocínio" ? "" : "hidden"}" id="lc-pat-wrap"><label for="lc-pat">Patrocinador</label><select class="select" id="lc-pat" name="patrocinioId"><option value="">Nenhum / outro</option>${[...state.patrocinios].sort((a, b) => String(a.nome).localeCompare(b.nome, "pt-BR")).map(c => `<option value="${esc(c.id)}" ${c.id === (l.patrocinioId || opts.patrocinioId) ? "selected" : ""}>${esc(c.nome)} — ${esc(rotuloPat(c))}</option>`).join("")}</select></div>
+        <div class="f ${tipo === "saida" ? "" : "hidden"}" id="lc-jogo-wrap"><label for="lc-jogo">De qual jogo? (opcional)</label><select class="select" id="lc-jogo" name="jogoId"><option value="">Nenhum</option>${jogosOpc.map(j => `<option value="${esc(j.id)}" ${j.id === jogoSel ? "selected" : ""}>${esc(rotuloJogo(j))}${j.adversario ? ` vs ${esc(j.adversario)}` : ""}${j.data ? ` · ${dataBR(j.data)}` : ""}</option>`).join("")}</select><span class="hint">Água, campo, torcida, festa: entra no custo real do jogo.</span></div>
         <div class="f"><label for="lc-acao">Pizza, rifa ou evento (opcional)</label><select class="select" id="lc-acao" name="acaoId"><option value="">Nenhum</option>${state.acoes.map(a => `<option value="${esc(a.id)}" ${a.id === (l.acaoId || opts.acaoId) ? "selected" : ""}>${esc(a.nome)}</option>`).join("")}</select></div>
       </div>
     </div>
@@ -3511,6 +3563,10 @@ function openLancamento(l = {}, opts = {}) {
     }
     $("#lc-atleta-wrap").classList.toggle("hidden", $("#lc-cat").value !== "Luvas");
     $("#lc-pat-wrap").classList.toggle("hidden", $("#lc-cat").value !== "Patrocínio");
+    const saida = form.querySelector('[name="tipo"]:checked').value === "saida";
+    $("#lc-sit-wrap").classList.toggle("hidden", !saida);
+    $("#lc-jogo-wrap").classList.toggle("hidden", !saida);
+    $("#lc-data-lab").textContent = saida && form.querySelector('[name="situacao"]:checked')?.value === "apagar" ? "Vence em" : "Data";
   });
   form.addEventListener("submit", async e => {
     e.preventDefault();
@@ -3518,7 +3574,11 @@ function openLancamento(l = {}, opts = {}) {
     const d = { tipo: form.querySelector('[name="tipo"]:checked').value, valor: num(v("valor")), data: v("data"), categoria: v("categoria"), forma: v("forma"), descricao: v("descricao"),
       atletaId: v("categoria") === "Luvas" ? v("atletaId") : "", acaoId: v("acaoId"), patrocinioId: "" };
     d.patrocinioId = d.tipo === "entrada" && d.categoria === "Patrocínio" ? v("patrocinioId") : "";
+    d.jogoId = d.tipo === "saida" ? v("jogoId") : "";
+    d.aPagar = d.tipo === "saida" && form.querySelector('[name="situacao"]:checked')?.value === "apagar";
+    if (l.pagoEm && !d.aPagar) { d.pagoEm = l.pagoEm; d.vencimento = l.vencimento || ""; }
     const al = $("#form-alert");
+    if (d.aPagar && d.categoria === "Luvas") { al.textContent = "As parcelas de luvas ficam no cadastro do atleta (Plantel). Aqui, registre só o pagamento quando ele acontecer."; al.classList.remove("hidden"); return; }
     if (d.valor <= 0) { al.textContent = "Informe um valor maior que zero."; al.classList.remove("hidden"); return; }
     if (!d.data) { al.textContent = "Informe a data."; al.classList.remove("hidden"); return; }
     if (d.categoria === "Luvas" && !d.atletaId) { al.textContent = "Escolha o atleta que recebeu as luvas."; al.classList.remove("hidden"); return; }
@@ -3528,9 +3588,10 @@ function openLancamento(l = {}, opts = {}) {
     d.criadoEm = l.criadoEm || now; d.atualizadoEm = now; d.por = l.por || state.usuario || "";
     if (await saveDoc("caixa", l.id || newId("caixa"), d)) {
       closeModal(); if (opts.voltarAcao) openAcao(opts.voltarAcao);
+      if (opts.voltarJogo && find("jogos", opts.voltarJogo)) openJogo(opts.voltarJogo);
       if (opts.voltarPat && find("patrocinios", opts.voltarPat)) openPatrocinio(find("patrocinios", opts.voltarPat));
-      toast(editando ? "Lançamento atualizado" : d.tipo === "entrada" ? "Entrada registrada" : "Saída registrada", "good");
-      registrar(`${editando ? "editou" : "lançou"} ${d.tipo === "entrada" ? "entrada" : "saída"} de ${money(d.valor)} — ${d.descricao}`);
+      toast(editando ? "Lançamento atualizado" : d.aPagar ? "Conta a pagar registrada" : d.tipo === "entrada" ? "Entrada registrada" : "Saída registrada", "good");
+      registrar(`${editando ? "editou" : "lançou"} ${d.aPagar ? "conta a pagar" : d.tipo === "entrada" ? "entrada" : "saída"} de ${money(d.valor)} — ${d.descricao}${d.aPagar && d.data ? ` (vence ${dataBR(d.data)})` : ""}`);
     }
   });
 }
@@ -3821,7 +3882,7 @@ const espacosDe = area => {
   return Array.isArray(e) ? e : ESPACOS_PADRAO.map(x => ({ ...x }));
 };
 const nomeEspaco = (area, id) => (espacosDe(area).find(e => e.id === id) || {}).nome || "";
-const recebidoPat = id => state.caixa.filter(l => l.tipo === "entrada" && l.patrocinioId === id).reduce((s, l) => s + num(l.valor), 0);
+const recebidoPat = id => caixaReal().filter(l => l.tipo === "entrada" && l.patrocinioId === id).reduce((s, l) => s + num(l.valor), 0);
 const rotuloPat = c => `${(AREA_PAT[c.area] || {}).l || ""}${c.espaco && nomeEspaco(c.area, c.espaco) ? ` · ${nomeEspaco(c.area, c.espaco)}` : ""}`;
 function resumoPatrocinios() {
   const P = state.patrocinios;
@@ -3839,7 +3900,7 @@ function cartaoPat(c) {
     <span class="nm">${esc(c.nome)}</span>
     ${c.combinado ? `<span class="meta pat-nota">${esc(c.combinado)}</span>` : ""}
     ${val > 0 ? `<span class="money">${money(val)}</span><span class="pat-bar"><i style="width:${pct}%"></i></span>
-      <span class="meta">${rec >= val - 0.004 ? "✓ Tudo recebido" : `Recebido ${money(rec)} · falta ${money(val - rec)}`}</span>` : `<span class="meta">Valor não informado</span>`}
+      <span class="meta">${rec >= val - 0.004 ? "✓ Tudo recebido" : `Recebido ${money(rec)} · falta ${money(val - rec)}`}</span>${(() => { const pa = parcelasAbertas(c.parcelas, rec)[0]; return pa && pa.data ? `<span class="meta">Próxima parcela: ${money(pa.falta)} em ${dataBR(pa.data)}</span>` : ""; })()}` : `<span class="meta">Valor não informado</span>`}
   </button>`;
 }
 function renderPatrocinios() {
@@ -3871,7 +3932,7 @@ function openPatrocinio(c = {}, opts = {}) {
   const editando = !!c.id, area = c.area || opts.area || "banner", A = AREA_PAT[area];
   const espaco = c.espaco || opts.espaco || "";
   const livres = A.espacos ? espacosDe(area).filter(e => e.id === espaco || !state.patrocinios.some(x => x.area === area && x.espaco === e.id)) : [];
-  const recs = editando ? state.caixa.filter(l => l.tipo === "entrada" && l.patrocinioId === c.id).sort((x, y) => String(y.data).localeCompare(x.data)) : [];
+  const recs = editando ? caixaReal().filter(l => l.tipo === "entrada" && l.patrocinioId === c.id).sort((x, y) => String(y.data).localeCompare(x.data)) : [];
   const rec = recs.reduce((s, l) => s + num(l.valor), 0), val = num(c.valor);
   openModal(`<form class="modal" id="pat-form" novalidate>
     <div class="modal-head"><div><h3>${editando ? esc(c.nome) : "Novo patrocinador"}</h3><p>${A.ic} ${A.l}${espaco ? ` · ${esc(nomeEspaco(area, espaco))}` : ""}</p></div><button type="button" class="x" data-act="close" aria-label="Fechar">✕</button></div>
@@ -3882,6 +3943,10 @@ function openPatrocinio(c = {}, opts = {}) {
         ${A.espacos ? `<div class="f"><label for="pt-espaco">Espaço no ${A.l.toLowerCase()}</label><select class="select" id="pt-espaco" name="espaco">${livres.map(e => `<option value="${esc(e.id)}" ${e.id === espaco ? "selected" : ""}>${esc(e.nome)}</option>`).join("")}</select></div>` : ""}
         ${moneyField("valor", "Valor combinado (temporada)", c.valor)}
         ${contatoField(c)}
+        <div class="f full" style="grid-column:1/-1"><span class="lab">Parcelas com data (opcional)</span>
+          <div class="parc-rows">${(c.parcelas || []).map(parcelaRow).join("")}</div>
+          <div><button type="button" class="btn sm edit-only" data-act="add-parcela" style="margin-top:4px">＋ Adicionar parcela</button></div>
+          <span class="hint">Valor e data prevista de cada recebimento. Aparecem em <b>Próximos 30 dias</b> no Financeiro. O que já foi recebido quita as parcelas mais antigas primeiro.</span></div>
         <div class="f full" style="grid-column:1/-1"><label for="pt-comb">O que foi combinado</label><textarea class="input" id="pt-comb" name="combinado" rows="3" placeholder="Ex.: logo no peito do uniforme 1 · 3 parcelas de R$ 1.000 · 1 post por mês no Instagram">${esc(c.combinado || "")}</textarea></div>
       </div>
       ${editando ? `<div class="sec-modal"><h4>Recebimentos <button type="button" class="btn sm royal edit-only" data-act="pat-receber" data-id="${esc(c.id)}">💰 Registrar recebimento</button></h4>
@@ -3895,8 +3960,10 @@ function openPatrocinio(c = {}, opts = {}) {
   form.addEventListener("submit", async e => {
     e.preventDefault();
     const v = n => String(form.querySelector(`[name="${n}"]`)?.value ?? "").trim();
-    const d = { nome: v("nome").replace(/\s+/g, " "), area, espaco: A.espacos ? v("espaco") : "", valor: num(v("valor")), contato: telFormat(v("contato")), combinado: v("combinado") };
+    const d = { nome: v("nome").replace(/\s+/g, " "), area, espaco: A.espacos ? v("espaco") : "", valor: num(v("valor")), contato: telFormat(v("contato")), combinado: v("combinado"), parcelas: readParcelas(form) };
     const al = $("#form-alert");
+    const somaP = d.parcelas.reduce((s, x) => s + x.valor, 0);
+    if (somaP > d.valor + 0.004) { al.textContent = `As parcelas somam ${money(somaP)}, mais que o valor combinado (${money(d.valor)}).`; al.classList.remove("hidden"); return; }
     if (!d.nome) { al.textContent = "Informe o nome do patrocinador."; al.classList.remove("hidden"); return; }
     if (A.espacos && !d.espaco) { al.textContent = "Não há espaço livre neste uniforme. Use \"Ajustar espaços\" para criar um."; al.classList.remove("hidden"); return; }
     if (A.espacos && state.patrocinios.some(x => x.id !== c.id && x.area === area && x.espaco === d.espaco)) { al.textContent = "Esse espaço acabou de ser ocupado por outro patrocinador. Feche e confira."; al.classList.remove("hidden"); return; }
@@ -4375,6 +4442,52 @@ function orcamento() {
   const temPrevisto = ORC_DESPESAS.concat(ORC_RECEITAS).some(k => num(prev[k]) > 0);
   return { c, pl, rc, despesas, receitas, D, R: Rc, saldoInicial, resultado: saldoInicial + Rc.previsto - D.previsto, temPrevisto };
 }
+// Fase 2 · dinheiro com data
+const somaDias = (iso, n) => { const [y, m, d] = String(iso).split("-").map(Number); const t = new Date(y, m - 1, d + n); return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`; };
+// Folha prevista por jogo: a média real depois de 3 jogos disputados; antes disso, o planejado no cenário
+function folhaPrevista(pl = planoElenco(state.plantel, cenarioAtual())) {
+  const rj = resumoJogos(), real = rj.realizados >= 3;
+  const media = real ? rj.gasto / rj.realizados : 0;
+  return { real, media, f1: real ? media : pl.porJogo, f2: real ? media : pl.porJogo2, realizados: rj.realizados };
+}
+// Saldo previsto até o fim do cenário escolhido: caixa de hoje + a receber − o que ainda falta pagar
+function saldoPrevisto() {
+  const c = cenarioAtual(), pl = planoElenco(state.plantel, c), rc = resumoCaixa(), rp = resumoPatrocinios(), fp = folhaPrevista(pl);
+  const { j1, j2 } = jogosDo(c);
+  const feitos1 = state.jogos.filter(j => jogoRealizado(j) && !ehFase2(j)).length, feitos2 = state.jogos.filter(j => jogoRealizado(j) && ehFase2(j)).length;
+  const rest1 = Math.max(0, j1 - feitos1), rest2 = Math.max(0, j2 - feitos2);
+  const folhaFutura = rest1 * fp.f1 + rest2 * fp.f2;
+  const real = (tipo, cat) => rc.E.filter(l => l.tipo === tipo && l.categoria === cat).reduce((s, l) => s + num(l.valor), 0);
+  const bonusFalta = Math.max(0, pl.bonusGar - real("saida", "Bônus de atletas"));
+  const prev = state.finCfg.previsto || {};
+  const orcFalta = ORC_DESPESAS.reduce((s, k) => s + Math.max(0, num(prev[k]) - real("saida", k) - rc.contas.filter(l => l.categoria === k).reduce((t, l) => t + num(l.valor), 0)), 0);
+  const condicionais = state.plantel.reduce((s, p) => s + (p.bonus || []).filter(b => tipoBonus(b) === "condicional").reduce((t, b) => t + num(b.valor), 0), 0);
+  const sai = rc.folhasTotal + folhaFutura + rc.luvasTotal + bonusFalta + rc.contasTotal + orcFalta;
+  return { c, pl, rc, fp, rest1, rest2, restantes: rest1 + rest2, folhaFutura, bonusFalta, orcFalta, condicionais, aReceber: rp.falta, sai, saldo: rc.saldo + rp.falta - sai };
+}
+// Próximos 30 dias: parcelas de luvas e de patrocínio, contas a pagar e folha prevista dos jogos marcados
+function agendaFinanceira(dias = 30) {
+  const hoje = hojeISO(), lim = somaDias(hoje, dias), fp = folhaPrevista(), itens = [];
+  state.plantel.forEach(p => parcelasAbertas(p.luvasParcelas, luvasPagoValor(p)).forEach(x => { if (x.data) itens.push({ tipo: "saida", data: x.data, valor: x.falta, txt: `Luvas · ${p.nome}` }); }));
+  state.patrocinios.forEach(c => parcelasAbertas(c.parcelas, recebidoPat(c.id)).forEach(x => { if (x.data) itens.push({ tipo: "entrada", data: x.data, valor: x.falta, txt: `Patrocínio · ${c.nome}` }); }));
+  contasAPagar().forEach(l => { if (l.data) itens.push({ tipo: "saida", data: l.data, valor: num(l.valor), txt: l.descricao || l.categoria }); });
+  state.jogos.filter(j => !jogoRealizado(j) && j.data).forEach(j => itens.push({ tipo: "saida", data: j.data, valor: ehFase2(j) ? fp.f2 : fp.f1, txt: `Folha prevista · ${rotuloJogo(j)}${j.adversario ? ` vs ${j.adversario}` : ""}`, previsto: true }));
+  resumoJogos().pendentes.forEach(({ j, f }) => itens.push({ tipo: "saida", data: j.data && j.data < hoje ? j.data : hoje, valor: f.pendente, txt: `Folha a pagar · ${rotuloJogo(j)}${j.adversario ? ` vs ${j.adversario}` : ""}` }));
+  const ord = (a, b) => String(a.data).localeCompare(String(b.data)) || (a.tipo === "entrada" ? -1 : 1);
+  const atrasados = itens.filter(x => x.data < hoje).sort(ord), prox = itens.filter(x => x.data >= hoje && x.data <= lim).sort(ord);
+  const soma = (L, t) => L.filter(x => x.tipo === t).reduce((s, x) => s + x.valor, 0);
+  return { hoje, lim, dias, fp, atrasados, prox, entra: soma(prox, "entrada"), sai: soma(prox, "saida"), atrasoSai: soma(atrasados, "saida"), atrasoEntra: soma(atrasados, "entrada") };
+}
+function textoAgenda() {
+  const a = agendaFinanceira(), s = saldoPrevisto();
+  const linha = x => `• ${dataBR(x.data).slice(0, 5)} ${x.tipo === "entrada" ? "entra" : "sai"} ${money(x.valor)} · ${x.txt}${x.previsto ? " (previsto)" : ""}`;
+  const L = [`*AMDC FC · Agenda financeira*`, `Só para a diretoria · ${dataBR(a.hoje)}`, ""];
+  if (a.atrasados.length) L.push(`*Atrasados*`, ...a.atrasados.map(linha), "");
+  L.push(`*Próximos ${a.dias} dias*`, ...(a.prox.length ? a.prox.map(linha) : ["• Nada com data neste período"]), `Sai ${money(a.sai)} · entra ${money(a.entra)}`, "");
+  L.push(`*Saldo previsto até o fim (${s.c.l.toLowerCase()})*: ${money(s.saldo)}`, `Caixa hoje ${money(s.rc.saldo)} + a receber ${money(s.aReceber)} − a pagar ${money(s.sai)}`);
+  if (s.condicionais > 0.004) L.push(`Se acontecer: − ${money(s.condicionais)} em bônus "só se acontecer"`);
+  return L.join("\n");
+}
 async function saveFinCfg(cfg) {
   cfg = { ...cfg, atualizadoPor: state.usuario || "" };
   if (db) return attempt(() => db.doc("config/financeiro").set(cfg));
@@ -4405,9 +4518,10 @@ function renderFinGeral() {
         : res >= 0 ? `✓ <b>A conta fecha</b>, com sobra de ${money(res)} no fim da temporada.` : `✕ <b>Faltam ${money(-res)}</b>: é preciso arrecadar mais ou reduzir gastos.`}</div>
         <button class="btn sm" data-act="fin-sec" data-sec="orcamento">${o.temPrevisto ? "Ver orçamento" : "Preencher orçamento"}</button></div>
     </div>
+    ${blocoAgenda()}
     <div class="kpis" style="margin-top:14px">
       <div class="kpi click" data-act="fin-sec" data-sec="caixa"><div class="lbl">Saldo atual do caixa</div><div class="val" style="color:${rc.saldo >= 0 ? "var(--good)" : "var(--bad)"}">${money(rc.saldo)}</div><div class="foot">${money(rc.entradas)} entraram · ${money(rc.saidas)} saíram</div></div>
-      <div class="kpi click ${rc.aPagar > 0.004 ? "alert" : ""}" data-act="fin-sec" data-sec="caixa"><div class="lbl">Compromissos a pagar</div><div class="val">${money(rc.aPagar)}</div><div class="foot">${money(rc.folhasTotal)} de jogos · ${money(rc.luvasTotal)} de luvas</div></div>
+      <div class="kpi click ${rc.aPagar > 0.004 ? "alert" : ""}" data-act="fin-sec" data-sec="caixa"><div class="lbl">Compromissos a pagar</div><div class="val">${money(rc.aPagar)}</div><div class="foot">${money(rc.folhasTotal)} de jogos · ${money(rc.luvasTotal)} de luvas${rc.contasTotal > 0.004 ? ` · ${money(rc.contasTotal)} de contas` : ""}</div></div>
       <div class="kpi click" data-act="fin-sec" data-sec="plano"><div class="lbl">Elenco por jogo</div><div class="val">${money(pl.porJogo)}</div><div class="foot"><span class="tag ${st.cls}">${st.t}</span>${Math.abs(pl.porJogo2 - pl.porJogo) > 0.004 ? ` · 2ª fase ${money(pl.porJogo2)}` : ""}</div></div>
       <div class="kpi click" data-act="fin-sec" data-sec="plano"><div class="lbl">Elenco na temporada</div><div class="val">${money(pl.total)}</div><div class="foot">${pl.j1 + pl.j2} jogos ${money(pl.jogos)} + luvas ${money(pl.luvas)} + bônus ${money(pl.bonusGar)}</div></div>
     </div>
@@ -4425,6 +4539,33 @@ function renderFinGeral() {
           <div><span>Diferença</span><b style="color:${!rj.realizados ? "inherit" : realPorJogo > pl.porJogo + 0.004 ? "var(--bad)" : "var(--good)"}">${rj.realizados ? (realPorJogo > pl.porJogo ? "+" : "") + money(realPorJogo - pl.porJogo) : "—"}</b></div>
         </div>
         <p class="hint" style="margin:10px 0 0">A média real inclui os bônus por gol e por acontecimento pagos nas folhas.</p>
+      </div>
+    </div>`;
+}
+
+function blocoAgenda() {
+  const s = saldoPrevisto(), a = agendaFinanceira();
+  const item = (x, atraso) => `<div class="it ${atraso ? "atraso" : ""}"><span class="quando">${atraso ? "atrasado" : dataBR(x.data).slice(0, 5)}</span><div class="tx"><b>${esc(x.txt)}</b><small>${atraso ? `desde ${dataBR(x.data)}` : x.tipo === "entrada" ? "entra" : "sai"}${x.previsto ? " · previsto" : ""}</small></div><span class="v ${x.tipo === "entrada" ? "ent" : "sai"}">${x.tipo === "entrada" ? "+" : "−"} ${money(x.valor)}</span></div>`;
+  const lista = [...a.atrasados.map(x => item(x, true)), ...a.prox.map(x => item(x, false))];
+  return `<div class="fin-grid" id="fin-agenda">
+      <div class="panel"><h3>Saldo previsto até o fim · ${esc(s.c.l.toLowerCase())}</h3>
+        <div class="fin-saldo ${s.saldo >= 0 ? "f-ok" : "f-neg"}" style="font-size:28px;font-weight:800;margin:4px 0 8px;color:${s.saldo >= 0 ? "var(--good)" : "var(--bad)"}">${money(s.saldo)}</div>
+        <div class="linhas conta">
+          <div><span>Caixa hoje</span><b>${money(s.rc.saldo)}</b></div>
+          <div><span>+ Patrocínio a receber</span><b class="ent">${money(s.aReceber)}</b></div>
+          <div><span>− Folhas já jogadas e não pagas</span><b class="sai">${money(s.rc.folhasTotal)}</b></div>
+          <div><span>− Folha dos ${s.restantes} jogo${s.restantes === 1 ? "" : "s"} que faltam${s.fp.real ? " (média real)" : " (planejado)"}</span><b class="sai">${money(s.folhaFutura)}</b></div>
+          <div><span>− Luvas que faltam pagar</span><b class="sai">${money(s.rc.luvasTotal)}</b></div>
+          ${s.bonusFalta > 0.004 ? `<div><span>− Bônus garantidos não pagos</span><b class="sai">${money(s.bonusFalta)}</b></div>` : ""}
+          <div><span>− Contas a pagar</span><b class="sai">${money(s.rc.contasTotal)}</b></div>
+          ${s.orcFalta > 0.004 ? `<div><span>− Outros gastos do orçamento ainda não lançados</span><b class="sai">${money(s.orcFalta)}</b></div>` : ""}
+        </div>
+        ${s.condicionais > 0.004 ? `<p class="hint" style="margin:10px 0 0"><b>Se acontecer:</b> − ${money(s.condicionais)} em bônus "só se acontecer" (ex.: acesso). Fica fora da conta acima.</p>` : ""}
+        <p class="hint" style="margin:10px 0 0">${s.fp.real ? `A folha dos próximos jogos usa a <b>média real</b> dos ${s.fp.realizados} jogos disputados (${money(s.fp.media)} por jogo).` : `Até o 3º jogo disputado, a folha usa o <b>planejado</b> do cenário (${money(s.pl.porJogo)} por jogo). Depois passa a usar a média real.`} Receitas de pizza, rifa e evento que ainda não aconteceram não entram.</p>
+      </div>
+      <div class="panel agenda"><h3 style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap">Próximos 30 dias <button class="btn sm" data-act="agenda-whats">💬 Para o WhatsApp</button></h3>
+        <div class="linhas" style="margin-bottom:8px"><div><span>Sai</span><b class="sai">${money(a.sai)}</b></div><div><span>Entra</span><b class="ent">${money(a.entra)}</b></div>${a.atrasados.length ? `<div><span style="color:var(--bad)">Atrasados</span><b class="sai">${money(a.atrasoSai + a.atrasoEntra)}</b></div>` : ""}</div>
+        ${lista.length ? `<div class="lista">${lista.join("")}</div>` : `<div class="empty-state"><b>Nada com data nos próximos 30 dias</b>Coloque datas nas parcelas de luvas (Plantel), nas parcelas de patrocínio e nas contas a pagar (Caixa). Jogos com data também aparecem.</div>`}
       </div>
     </div>`;
 }
@@ -4694,6 +4835,17 @@ function bonusRow(b = {}) {
     <select class="select" name="bonusTipo" aria-label="Tipo do bônus">${Object.entries(TIPOS_BONUS).map(([v, l]) => `<option value="${v}" ${v === t ? "selected" : ""}>${l}</option>`).join("")}</select>
     <button type="button" class="x" data-act="rm-bonus" title="Remover bônus">×</button></div>`;
 }
+// Parcela com data (luvas no Plantel e recebimentos de patrocínio)
+function parcelaRow(x = {}) {
+  return `<div class="parc-row">
+    <div class="money-in"><input class="input" name="parcValor" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0,00" aria-label="Valor da parcela" value="${num(x.valor) ? esc(num(x.valor)) : ""}"></div>
+    <input class="input" name="parcData" type="date" aria-label="Data prevista" value="${esc(x.data || "")}">
+    <button type="button" class="x edit-only" data-act="rm-parcela" title="Remover parcela">×</button></div>`;
+}
+function readParcelas(form) {
+  return [...form.querySelectorAll(".parc-row")].map(r => ({ valor: num(r.querySelector('[name="parcValor"]').value), data: r.querySelector('[name="parcData"]').value || "" }))
+    .filter(x => x.valor > 0).sort((a, b) => String(a.data || "9999").localeCompare(String(b.data || "9999")));
+}
 function seg(name, options, current) {
   return `<div class="seg">${options.map(o => `<label><input type="radio" name="${name}" value="${esc(o.value)}" ${o.value === current ? "checked" : ""} ${o.disabled ? "disabled" : ""}><span>${o.label}${o.sub ? `<small>${o.sub}</small>` : ""}</span></label>`).join("")}</div>`;
 }
@@ -4711,6 +4863,11 @@ function financeFieldset(p, isPlantel) {
         ${seg("luvasStatus", [{ value: "pago", label: "Pagas" }, { value: "nao_confirmado", label: "Não confirmado" }], p.luvasStatus === "pago" ? "pago" : "nao_confirmado")}
         <span class="hint">"Não confirmado" = sem confirmação no controle, não quer dizer atraso.</span></div>` : ""}
     </div>
+    ${isPlantel ? `<div class="f" style="margin-top:12px"><span class="lab">Parcelas das luvas com data (opcional)</span>
+      <div class="parc-rows">${(p.luvasParcelas || []).map(parcelaRow).join("")}</div>
+      <div><button type="button" class="btn sm" data-act="add-parcela" style="margin-top:4px">＋ Adicionar parcela</button></div>
+      <span class="err" data-err="parcelas"></span>
+      <span class="hint">Divida as luvas em parcelas com data para elas aparecerem em <b>Próximos 30 dias</b> no Financeiro. Sem parcelas, vale o total, sem data. Cada pagamento continua sendo lançado no Caixa.</span></div>` : ""}
     <div class="grid2" style="margin-top:12px">
       <div class="f"><span class="lab">Chuteira</span>
         ${seg("chuteira", [{ value: "sim", label: "Sim" }, { value: "nao", label: "Não" }], p.chuteira ? "sim" : "nao")}</div>
@@ -4810,7 +4967,7 @@ function openPlayerForm(kind, p = {}, opts = {}) {
     form.querySelector(".modal-head h3").textContent = isPlantel ? "Detalhes do atleta" : "Detalhes do jogador";
     form.querySelector(".modal-head p").textContent = "Modo de consulta — só o presidente e os editores alteram dados";
     form.querySelectorAll(".modal-body input, .modal-body select, .modal-body textarea").forEach(x => { x.disabled = true; });
-    form.querySelectorAll('#save-btn, [data-act="add-bonus"], [data-act="rm-bonus"], [data-act="del-plantel"], [data-act="to-radar"], [data-act="del-radar"], .modal-body .notice').forEach(x => x.remove());
+    form.querySelectorAll('#save-btn, [data-act="add-bonus"], [data-act="rm-bonus"], [data-act="add-parcela"], [data-act="rm-parcela"], [data-act="del-plantel"], [data-act="to-radar"], [data-act="del-radar"], .modal-body .notice').forEach(x => x.remove());
     const c = form.querySelector('.modal-foot [data-act="close"]'); if (c) { c.textContent = "Fechar"; c.classList.add("primary"); }
     if (isPlantel) { const f = form.querySelector('[name="cpf"]'); if (f) { f.value = temCpf(p) ? cpfTela(p) : "Restrito"; } }
     form.querySelectorAll(".cpf-ver").forEach(x => x.remove());
@@ -4878,6 +5035,8 @@ async function submitPlayer(form) {
     data.prioridade = PRIO_LABEL[v("prioridade")] ? v("prioridade") : "";
   } else {
     data.luvasStatus = data.assinatura > 0 ? (v("luvasStatus") === "pago" ? "pago" : "nao_confirmado") : "";
+    data.luvasParcelas = data.assinatura > 0 ? readParcelas(form) : [];
+    { const sp = data.luvasParcelas.reduce((s, x) => s + x.valor, 0); if (sp > data.assinatura + 0.004) errs.parcelas = `As parcelas somam ${money(sp)}, mais que as luvas (${money(data.assinatura)}).`; }
     data.chuteiraEntrega = data.chuteira ? (v("chuteiraEntrega") === "entregue" ? "entregue" : "nao_confirmada") : "";
     data.cpf = cpfFormat(v("cpf"));
     data.nascimento = v("nascimento");
@@ -5156,11 +5315,13 @@ document.addEventListener("click", async e => {
   if (act === "lanc-editar") {
     if (e.target.closest("button,a") && e.target.closest("button,a") !== el) return;
     const l = find("caixa", id); if (!l) return;
-    return openLancamento(l, { voltarAcao: state.acaoOpen || null });
+    const noJogo = $("#jogo-modal") && state.jogoOpen && l.jogoId === state.jogoOpen ? state.jogoOpen : null;
+    return openLancamento(l, { voltarAcao: noJogo ? null : state.acaoOpen || null, voltarJogo: noJogo });
   }
+  if (act === "agenda-whats") return abrirTexto("Agenda financeira", "Próximos 30 dias e saldo previsto · só para a diretoria", textoAgenda());
   if (act === "membro-editar") { const m = find("equipe", id); if (m) openMembro(m); return; }
   if (act === "pat-abrir") { const c = find("patrocinios", id); if (c) openPatrocinio(c); return; }
-  const EDITA_CLUBE = ["pat-novo", "pat-espacos", "pat-receber", "pat-excluir", "conv-enviar", "conv-lembrar", "conf-set", "pres-confirmados", "gerar-rodadas", "novo-jogo", "pres-todos", "pres-limpar", "pag-marcar", "pag-desfazer", "jogo-excluir", "lanc-novo", "lanc-excluir", "acao-nova", "acao-editar", "acao-excluir", "luvas-pagar", "liga-toggle", "liga-ficha", "membro-novo", "membro-copa", "membro-excluir", "equipe-padrao"];
+  const EDITA_CLUBE = ["pat-novo", "pat-espacos", "pat-receber", "pat-excluir", "conv-enviar", "conv-lembrar", "conf-set", "pres-confirmados", "gerar-rodadas", "novo-jogo", "pres-todos", "pres-limpar", "pag-marcar", "pag-desfazer", "jogo-excluir", "lanc-novo", "lanc-excluir", "conta-pagar", "acao-nova", "acao-editar", "acao-excluir", "luvas-pagar", "liga-toggle", "liga-ficha", "membro-novo", "membro-copa", "membro-excluir", "equipe-padrao"];
   if (state.readOnly && EDITA_CLUBE.includes(act)) { toast("Acesso somente leitura", "bad"); return; }
   if (act === "gerar-rodadas") return gerarRodadas();
   if (act === "pat-novo") return openPatrocinio({}, { area: el.dataset.area, espaco: el.dataset.espaco || "" });
@@ -5204,7 +5365,16 @@ document.addEventListener("click", async e => {
     } else openJogo(jid);
     return;
   }
-  if (act === "lanc-novo") return openLancamento({}, { tipo: el.dataset.tipo, acaoId: el.dataset.acao || "", voltarAcao: el.dataset.acao || null });
+  if (act === "lanc-novo") return openLancamento({}, { tipo: el.dataset.tipo, acaoId: el.dataset.acao || "", voltarAcao: el.dataset.acao || null, jogoId: el.dataset.jogo || "", voltarJogo: el.dataset.jogo || null, aPagar: el.dataset.apagar === "1" });
+  if (act === "conta-pagar") {
+    const l = find("caixa", id); if (!l || !l.aPagar) return;
+    if (!await confirmBox({ title: "Marcar como pago", text: `<p style="margin:0">Confirmar que <b>${esc(l.descricao || l.categoria)}</b> (${money(l.valor)}) foi pago hoje? O valor sai do saldo do caixa.</p>`, ok: "Foi pago" })) return;
+    const hoje = hojeISO();
+    if (await opsDoc("caixa", id, [{ c: ["aPagar"], v: false }, { c: ["vencimento"], v: l.data || "" }, { c: ["data"], v: hoje }, { c: ["pagoEm"], v: new Date().toISOString() }, { c: ["pagoPor"], v: state.usuario || "" }], l)) {
+      toast("Conta paga", "good"); registrar(`pagou a conta ${l.descricao || l.categoria} (${money(l.valor)})`);
+    }
+    return;
+  }
   if (act === "lanc-excluir") {
     const l = find("caixa", id); if (!l) return;
     const volta = l.acaoId && find("acoes", l.acaoId) ? l.acaoId : null;
@@ -5259,6 +5429,13 @@ document.addEventListener("click", async e => {
     return;
   }
   if (act === "rm-bonus") { el.closest(".bonus-row").remove(); updateCalc(); return; }
+  if (act === "add-parcela") {
+    const box = el.closest(".f").querySelector(".parc-rows"); if (!box) return;
+    box.insertAdjacentHTML("beforeend", parcelaRow());
+    box.lastElementChild.querySelector("input").focus();
+    return;
+  }
+  if (act === "rm-parcela") { el.closest(".parc-row").remove(); return; }
 
   if (state.readOnly && ["new-radar", "new-plantel", "hire", "swap", "del-radar", "del-plantel", "to-radar", "contact-today", "config"].includes(act)) {
     toast("Modo de consulta: só o presidente e os editores alteram dados", "bad"); return;
